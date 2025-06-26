@@ -11,11 +11,11 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 
-# Build outputs
-build/
-dist/
-.next/
-out/
+# Build outputs (only exclude build folders, not source code)
+/build/
+/dist/
+/.next/
+/out/
 
 # Runtime data
 pids
