@@ -77,8 +77,8 @@ export default function AssignmentForm({ onSubmit }) {
       <div className="max-w-4xl mx-auto">
         {/* Header Card */}
         <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-6 text-center border border-white/20">
-          <div className="text-4xl mb-4">📚</div>
-          <h1 className="text-3xl font-bold text-white mb-2">Tạo Bài Tập</h1>
+          {/* <div className="text-4xl mb-4">📚</div> */}
+          <h1 className="text-3xl font-bold text-white mb-2">📚 Tạo Bài Tập</h1>
           <p className="text-gray-200 text-lg">
             Thiết lập bài tập phù hợp với nhu cầu học tập của bạn
           </p>

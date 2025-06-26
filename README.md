@@ -64,7 +64,7 @@ E4Fun là một ứng dụng web học tiếng Anh hiện đại được xây d
 
 ### 1. Clone repository
 ```bash
-git clone https://github.com/your-username/e4fun.git
+git clone https://github.com/hoangtubongdem1511/e4fun.git
 cd e4fun
 ```
 
@@ -125,29 +125,38 @@ npm start
 ## 📖 Hướng dẫn sử dụng
 
 ### 🏠 Trang chủ
+<img src="/frontend/images/Home.png" width="100%" alt="Home">
 - Xem tổng quan các tính năng
 - Truy cập nhanh vào các chức năng chính
 - Tìm hiểu về AI Gemini và lợi ích
 
 ### 📚 Từ điển
+<img src="/frontend/images/Dictionary1.png" width="100%" alt="Dictionary1">
+<img src="/frontend/images/Dictionary2.png" width="100%" alt="Dictionary2">
 1. Nhập từ cần tra cứu vào ô tìm kiếm
 2. Nhấn "Tra cứu từ" hoặc Enter
 3. Xem kết quả với định nghĩa chi tiết
 4. Sử dụng gợi ý từ vựng phổ biến
 
 ### ✍️ Luyện viết
+<img src="/frontend/images/Writing1.png" width="100%" alt="Writing1">
+<img src="/frontend/images/Writing2.png" width="100%" alt="Writing2">
 1. Chọn chủ đề hoặc nhập chủ đề tự do
 2. Viết bài với ít nhất 100-200 từ
 3. Nhấn "Chấm điểm bài viết"
 4. Xem phản hồi chi tiết từ AI tutor
 
 ### 🤖 AI Tutor
+<img src="/frontend/images/ChatBox.png" width="100%" alt="ChatBox">
 1. Nhập câu hỏi về tiếng Anh
 2. Upload ảnh (tùy chọn) để phân tích
 3. Bật "Suy nghĩ sâu" cho câu trả lời chi tiết
 4. Chat liên tục với AI tutor
 
 ### 🎯 Bài tập
+<img src="/frontend/images/Assignment1.png" width="100%" alt="Assignment1">
+<img src="/frontend/images/Assignment2.png" width="100%" alt="Assignment2">
+<img src="/frontend/images/Assignment3.png" width="100%" alt="Assignment3">
 1. Chọn chủ đề bài tập
 2. Đặt số lượng câu hỏi (1-30)
 3. Chọn loại câu hỏi
@@ -200,4 +209,4 @@ e4fun/
 4. Push to branch (`git push origin feature/AmazingFeature`)
 5. Mở Pull Request
 
-⭐ **Nếu dự án này hữu ích, hãy cho chúng tôi một star!** 
+⭐ **Nếu dự án này hữu ích, hãy cho mình một star!** 
