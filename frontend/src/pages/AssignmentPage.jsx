@@ -9,7 +9,7 @@ export default function AssignmentPage() {
   const [result, setResult] = useState(null);
 
   const handleCreateAssignment = async (data) => {
-    const res = await axios.post("http://localhost:5000/api/assignment/generate", data);
+    const res = await axios.post("/api/assignment/generate", data);
     let quizList = res.data.candidates?.[0]?.content?.parts?.[0]?.text;
     console.log("Raw quizList:", quizList);
     
@@ -38,7 +38,7 @@ export default function AssignmentPage() {
 
   const handleSubmitQuiz = async (answers) => {
     // Gửi đáp án lên backend để chấm điểm và giải thích
-    const res = await axios.post("http://localhost:5000/api/assignment/grade", {
+    const res = await axios.post("/api/assignment/grade", {
       questions,
       userAnswers: answers
     });

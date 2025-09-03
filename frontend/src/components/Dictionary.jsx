@@ -17,7 +17,7 @@ export default function Dictionary() {
     setResult("");
     
     try {
-      const res = await axios.post("http://localhost:5000/api/dictionary", { word });
+      const res = await axios.post("/api/dictionary", { word });
       const text = res.data.candidates?.[0]?.content?.parts?.[0]?.text;
       if (text) {
         setResult(text);
