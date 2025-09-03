@@ -5,9 +5,6 @@
       "use": "@vercel/static-build",
       "config": {
         "distDir": "build"
-      },
-      "env": {
-        "CI": "false"
       }
     },
     {
@@ -16,15 +13,7 @@
     }
   ],
   "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/frontend/$1"
-    }
-  ],
-  "buildCommand": "cd frontend && npm run build",
-  "outputDirectory": "frontend/build"
+    { "src": "/api/(.*)", "dest": "/api/$1" },
+    { "src": "/(.*)", "dest": "/frontend/$1" }
+  ]
 }
