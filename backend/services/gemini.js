@@ -1,7 +1,12 @@
 const axios = require('axios');
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=' + GEMINI_API_KEY;
+const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+const GEMINI_API_URL =
+  'https://generativelanguage.googleapis.com/v1/models/' +
+  GEMINI_MODEL +
+  ':generateContent?key=' +
+  GEMINI_API_KEY;
 
 // Hàm gọi Gemini cho từ điển
 async function getDictionary(word, context) {
@@ -71,8 +76,12 @@ async function chatWithAI({ message, images, deepThink, googleSearch }) {
     try {
       console.log('Processing images:', images.length, 'images');
       
-      // Sử dụng Gemini Pro Vision cho ảnh
-      const visionApiUrl = 'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=' + GEMINI_API_KEY;
+      // Sử dụng Gemini model cho ảnh (multimodal)
+      const visionApiUrl =
+        'https://generativelanguage.googleapis.com/v1/models/' +
+        GEMINI_MODEL +
+        ':generateContent?key=' +
+        GEMINI_API_KEY;
       
       // Tạo prompt cho ảnh
       const imagePrompt = `Hãy phân tích ảnh này và trả lời câu hỏi: ${prompt}`;
