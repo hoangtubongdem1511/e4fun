@@ -35,7 +35,7 @@ export default function Dictionary() {
   return (
     <div className="space-y-6">
       {/* Search Form */}
-      <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
+      <div className="bg-white/80 dark:bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-gray-200/80 dark:border-white/20">
         <form onSubmit={handleSearch} className="space-y-6">
           {/* Search Input */}
           <div className="relative">
@@ -45,7 +45,7 @@ export default function Dictionary() {
               </svg>
             </div>
             <input
-              className="w-full pl-12 pr-4 py-4 bg-gray-800/50 border-2 border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-300"
+              className="w-full pl-12 pr-4 py-4 bg-gray-100/70 dark:bg-gray-800/50 border-2 border-gray-200/70 dark:border-gray-600/50 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-300"
               placeholder="Nhập từ cần tra cứu..."
               value={word}
               onChange={e => setWord(e.target.value)}
@@ -59,7 +59,7 @@ export default function Dictionary() {
             disabled={isLoading || !word.trim()}
             className={`w-full py-4 px-6 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 ${
               isLoading || !word.trim()
-                ? 'bg-gray-500 text-gray-300 cursor-not-allowed'
+                ? 'bg-gray-300 dark:bg-gray-500 text-gray-600 dark:text-gray-300 cursor-not-allowed'
                 : 'bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 shadow-lg'
             }`}
           >
@@ -70,9 +70,9 @@ export default function Dictionary() {
               </div>
             ) : (
               <div className="flex items-center justify-center">
-                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                {/* <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
+                </svg> */}
                 Tra cứu từ
               </div>
             )}
@@ -83,7 +83,7 @@ export default function Dictionary() {
       {/* Error Message */}
       {error && (
         <div className="bg-red-500/20 border border-red-500/30 rounded-xl p-4">
-          <div className="flex items-center text-red-300">
+          <div className="flex items-center text-red-700 dark:text-red-300">
             <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
             </svg>
@@ -94,7 +94,7 @@ export default function Dictionary() {
 
       {/* Result */}
       {result && (
-        <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
+        <div className="bg-white/80 dark:bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-gray-200/80 dark:border-white/20">
           <div className="flex items-center mb-6">
             <div className="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center mr-4">
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -102,13 +102,13 @@ export default function Dictionary() {
               </svg>
             </div>
             <div>
-              <h3 className="text-white font-bold text-xl">Kết quả tra cứu</h3>
-              <p className="text-gray-300 text-sm">Định nghĩa và thông tin chi tiết</p>
+              <h3 className="text-gray-900 dark:text-white font-bold text-xl">Kết quả tra cứu</h3>
+              <p className="text-gray-600 dark:text-gray-300 text-sm">Định nghĩa và thông tin chi tiết</p>
             </div>
           </div>
           
-          <div className="prose prose-invert max-w-none">
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-600/50">
+          <div className="prose dark:prose-invert max-w-none">
+            <div className="bg-gray-100/60 dark:bg-gray-800/50 rounded-xl p-6 border border-gray-200/70 dark:border-gray-600/50">
               <ReactMarkdown>{result}</ReactMarkdown>
             </div>
           </div>
@@ -116,14 +116,14 @@ export default function Dictionary() {
       )}
 
       {/* Quick Suggestions */}
-      <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-        <h3 className="text-white font-semibold text-lg mb-4">💡 Gợi ý từ vựng phổ biến</h3>
+      <div className="bg-white/80 dark:bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/80 dark:border-white/20">
+        <h3 className="text-gray-900 dark:text-white font-semibold text-lg mb-4">Gợi ý từ vựng phổ biến</h3>
         <div className="flex flex-wrap gap-2">
           {['hello', 'beautiful', 'technology', 'education', 'happiness', 'success'].map((suggestedWord) => (
             <button
               key={suggestedWord}
               onClick={() => setWord(suggestedWord)}
-              className="px-4 py-2 bg-gray-800/50 text-gray-200 border border-gray-600/50 rounded-lg hover:bg-blue-500 hover:text-white hover:border-blue-400 transition-all duration-300 text-sm font-medium"
+              className="px-4 py-2 bg-gray-100/70 dark:bg-gray-800/50 text-gray-700 dark:text-gray-200 border border-gray-200/70 dark:border-gray-600/50 rounded-lg hover:bg-blue-500 hover:text-white hover:border-blue-400 transition-all duration-300 text-sm font-medium"
             >
               {suggestedWord}
             </button>

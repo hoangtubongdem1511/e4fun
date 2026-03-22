@@ -51,15 +51,15 @@ export default function WritingPractice() {
   return (
     <div className="space-y-6">
       {/* Writing Form */}
-      <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
+      <div className="bg-white/80 dark:bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-gray-200/80 dark:border-white/20">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Topic Input */}
           <div>
-            <label className="block text-white font-semibold text-lg mb-3">
-              📝 Chủ đề bài viết
+            <label className="block text-gray-900 dark:text-white font-semibold text-lg mb-3">
+              Chủ đề bài viết
             </label>
             <input
-              className="w-full px-4 py-4 bg-gray-800/50 border-2 border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-green-400 transition-all duration-300"
+              className="w-full px-4 py-4 bg-gray-100/70 dark:bg-gray-800/50 border-2 border-gray-200/70 dark:border-gray-600/50 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-green-400 transition-all duration-300"
               placeholder="Nhập chủ đề bài viết..."
               value={topic}
               onChange={e => setTopic(e.target.value)}
@@ -68,14 +68,14 @@ export default function WritingPractice() {
             
             {/* Topic Suggestions */}
             <div className="mt-3">
-              <p className="text-gray-300 text-sm mb-2">💡 Gợi ý chủ đề:</p>
+              <p className="text-gray-600 dark:text-gray-300 text-sm mb-2">Gợi ý chủ đề:</p>
               <div className="flex flex-wrap gap-2">
                 {WRITING_TOPICS.map((suggestedTopic) => (
                   <button
                     key={suggestedTopic}
                     type="button"
                     onClick={() => handleTopicSuggestion(suggestedTopic)}
-                    className="px-3 py-1 bg-gray-800/50 text-gray-200 border border-gray-600/50 rounded-lg hover:bg-green-500 hover:text-white hover:border-green-400 transition-all duration-300 text-sm"
+                    className="px-3 py-1 bg-gray-100/70 dark:bg-gray-800/50 text-gray-700 dark:text-gray-200 border border-gray-200/70 dark:border-gray-600/50 rounded-lg hover:bg-green-500 hover:text-white hover:border-green-400 transition-all duration-300 text-sm"
                   >
                     {suggestedTopic}
                   </button>
@@ -86,19 +86,19 @@ export default function WritingPractice() {
 
           {/* Content Textarea */}
           <div>
-            <label className="block text-white font-semibold text-lg mb-3">
-              ✍️ Nội dung bài viết
+            <label className="block text-gray-900 dark:text-white font-semibold text-lg mb-3">
+              Nội dung bài viết
             </label>
             <div className="relative">
               <textarea
-                className="w-full px-4 py-4 bg-gray-800/50 border-2 border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-green-400 transition-all duration-300 resize-none"
+                className="w-full px-4 py-4 bg-gray-100/70 dark:bg-gray-800/50 border-2 border-gray-200/70 dark:border-gray-600/50 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-green-400 transition-all duration-300 resize-none"
                 placeholder="Viết bài của bạn ở đây..."
                 rows={8}
                 value={content}
                 onChange={e => setContent(e.target.value)}
                 disabled={isLoading}
               />
-              <div className="absolute bottom-3 right-3 text-gray-400 text-sm">
+              <div className="absolute bottom-3 right-3 text-gray-500 dark:text-gray-400 text-sm">
                 {wordCount} từ
               </div>
             </div>
@@ -110,7 +110,7 @@ export default function WritingPractice() {
             disabled={isLoading || !topic.trim() || !content.trim()}
             className={`w-full py-4 px-6 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 ${
               isLoading || !topic.trim() || !content.trim()
-                ? 'bg-gray-500 text-gray-300 cursor-not-allowed'
+                ? 'bg-gray-300 dark:bg-gray-500 text-gray-600 dark:text-gray-300 cursor-not-allowed'
                 : 'bg-gradient-to-r from-green-500 to-blue-600 text-white hover:from-green-600 hover:to-blue-700 shadow-lg'
             }`}
           >
@@ -121,9 +121,9 @@ export default function WritingPractice() {
               </div>
             ) : (
               <div className="flex items-center justify-center">
-                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                {/* <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+                </svg> */}
                 Chấm điểm bài viết
               </div>
             )}
@@ -134,7 +134,7 @@ export default function WritingPractice() {
       {/* Error Message */}
       {error && (
         <div className="bg-red-500/20 border border-red-500/30 rounded-xl p-4">
-          <div className="flex items-center text-red-300">
+          <div className="flex items-center text-red-700 dark:text-red-300">
             <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
             </svg>
@@ -145,7 +145,7 @@ export default function WritingPractice() {
 
       {/* Result */}
       {result && (
-        <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
+        <div className="bg-white/80 dark:bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-gray-200/80 dark:border-white/20">
           <div className="flex items-center mb-6">
             <div className="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center mr-4">
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -153,13 +153,13 @@ export default function WritingPractice() {
               </svg>
             </div>
             <div>
-              <h3 className="text-white font-bold text-xl">Phản hồi từ AI tutor</h3>
-              <p className="text-gray-300 text-sm">Điểm số và góp ý chi tiết</p>
+              <h3 className="text-gray-900 dark:text-white font-bold text-xl">Phản hồi từ AI tutor</h3>
+              <p className="text-gray-600 dark:text-gray-300 text-sm">Điểm số và góp ý chi tiết</p>
             </div>
           </div>
           
-          <div className="prose prose-invert max-w-none">
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-600/50">
+          <div className="prose dark:prose-invert max-w-none">
+            <div className="bg-gray-100/60 dark:bg-gray-800/50 rounded-xl p-6 border border-gray-200/70 dark:border-gray-600/50">
               <ReactMarkdown>{result}</ReactMarkdown>
             </div>
           </div>
@@ -167,9 +167,9 @@ export default function WritingPractice() {
       )}
 
       {/* Writing Tips */}
-      <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-        <h3 className="text-white font-semibold text-lg mb-4">💡 Mẹo viết bài hiệu quả</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-300">
+      <div className="bg-white/80 dark:bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/80 dark:border-white/20">
+        <h3 className="text-gray-900 dark:text-white font-semibold text-lg mb-4">Mẹo viết bài hiệu quả</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600 dark:text-gray-300">
           <div className="space-y-2">
             <div className="flex items-start">
               <span className="text-green-400 mr-2">✓</span>
