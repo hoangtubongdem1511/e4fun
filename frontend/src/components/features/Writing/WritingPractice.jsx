@@ -1,6 +1,9 @@
 import { useState } from "react";
-import axios from "axios";
 import ReactMarkdown from "react-markdown";
+import { analyzeWritingText } from "@/services/writingService";
+import Input from "@/components/ui/Input";
+import Textarea from "@/components/ui/Textarea";
+import Button from "@/components/ui/Button";
 
 const WRITING_TOPICS = [
   "My favorite hobby",
@@ -27,13 +30,9 @@ export default function WritingPractice() {
     setResult("");
     
     try {
-      const res = await axios.post("http://localhost:5000/api/writing", { topic, content });
-      const text = res.data.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (text) {
-        setResult(text);
-      } else {
-        setError("Không thể phân tích bài viết. Vui lòng thử lại.");
-      }
+      const text = await analyzeWritingText({ topic, content });
+      if (!text) setError("Không thể phân tích bài viết. Vui lòng thử lại.");
+      else setResult(text);
     } catch (err) {
       console.error("Writing error:", err);
       setError("Có lỗi xảy ra khi phân tích bài viết. Vui lòng thử lại.");
@@ -58,7 +57,7 @@ export default function WritingPractice() {
             <label className="block text-gray-900 dark:text-white font-semibold text-lg mb-3">
               Chủ đề bài viết
             </label>
-            <input
+            <Input
               className="w-full px-4 py-4 bg-gray-100/70 dark:bg-gray-800/50 border-2 border-gray-200/70 dark:border-gray-600/50 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-green-400 transition-all duration-300"
               placeholder="Nhập chủ đề bài viết..."
               value={topic}
@@ -90,7 +89,7 @@ export default function WritingPractice() {
               Nội dung bài viết
             </label>
             <div className="relative">
-              <textarea
+              <Textarea
                 className="w-full px-4 py-4 bg-gray-100/70 dark:bg-gray-800/50 border-2 border-gray-200/70 dark:border-gray-600/50 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-green-400 transition-all duration-300 resize-none"
                 placeholder="Viết bài của bạn ở đây..."
                 rows={8}
@@ -105,7 +104,7 @@ export default function WritingPractice() {
           </div>
 
           {/* Submit Button */}
-          <button 
+          <Button
             type="submit" 
             disabled={isLoading || !topic.trim() || !content.trim()}
             className={`w-full py-4 px-6 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 ${
@@ -127,7 +126,7 @@ export default function WritingPractice() {
                 Chấm điểm bài viết
               </div>
             )}
-          </button>
+          </Button>
         </form>
       </div>
 

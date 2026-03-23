@@ -1,4 +1,4 @@
-import Dictionary from "../components/Dictionary";
+import Dictionary from "@/components/features/Dictionary/Dictionary";
 
 export default function DictionaryPage() {
   return (
@@ -13,7 +13,7 @@ export default function DictionaryPage() {
             Tra cứu từ vựng với định nghĩa chi tiết, ví dụ và phát âm từ AI Gemini
           </p>
         </div>
-        
+
         {/* Dictionary Component */}
         <Dictionary />
       </div>

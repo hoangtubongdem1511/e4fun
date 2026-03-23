@@ -1,4 +1,4 @@
-import Chatbot from "../components/Chatbot";
+import Chatbot from "@/components/features/Chatbot/Chatbot";
 
 export default function ChatbotPage() {
   return (
@@ -13,7 +13,7 @@ export default function ChatbotPage() {
             Chat với AI tutor thông minh để được tư vấn và hỗ trợ học tiếng Anh 24/7
           </p>
         </div>
-        
+
         {/* Chatbot Component */}
         <div className="flex justify-center">
           <Chatbot />

@@ -1,6 +1,21 @@
 # Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app) and uses [**CRACO**](https://github.com/dilanx/craco) for webpack aliases (`@` → `src`).
+
+## Project structure
+
+- `src/components/common` — layout dùng chung (ví dụ `Layout.jsx`)
+- `src/components/common/Navbar.jsx` — thanh điều hướng (tách khỏi `Layout`)
+- `src/components/features/<Feature>` — component theo tính năng (Assignment, Dictionary, Writing, Chatbot)
+- `src/components/ui` — primitive UI tái sử dụng (placeholder)
+- `src/pages` — route-level pages
+- `src/services` — gọi API (`api.js` + `*Service.js`)
+- `src/styles` — CSS toàn cục (`globals.css`)
+- `src/hooks`, `src/context`, `src/utils` — placeholder (`.gitkeep`)
+
+Import gợi ý: `@/components/features/Assignment/QuizGame.jsx`, `@/pages/Home.jsx`, `@/services/assignmentService.js`.
+
+Copy `.env.example` thành `.env` nếu cần đổi `REACT_APP_API_URL`.
 
 ## Available Scripts
 

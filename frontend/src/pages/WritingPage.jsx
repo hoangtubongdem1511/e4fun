@@ -1,4 +1,4 @@
-import WritingPractice from "../components/WritingPractice";
+import WritingPractice from "@/components/features/Writing/WritingPractice";
 
 export default function WritingPage() {
   return (
@@ -13,7 +13,7 @@ export default function WritingPage() {
             Viết bài và nhận phản hồi chi tiết từ AI tutor để cải thiện kỹ năng viết
           </p>
         </div>
-        
+
         {/* Writing Component */}
         <WritingPractice />
       </div>

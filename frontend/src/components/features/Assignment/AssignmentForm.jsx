@@ -1,4 +1,6 @@
 import { useState } from "react";
+import Input from "@/components/ui/Input";
+import Button from "@/components/ui/Button";
 
 const SUGGESTED_TOPICS = [
   "Local weather", "Public transport", "Daily routines", "Simple hobbies", "Shopping trips"
@@ -93,7 +95,7 @@ export default function AssignmentForm({ onSubmit }) {
                 Chủ đề
               </label>
               <div className="relative">
-                <input
+                <Input
                   className={`w-full px-6 py-4 rounded-xl bg-gray-100/70 dark:bg-gray-800/50 border-2 border-gray-200/70 dark:border-gray-600/50 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300 ${
                     errors.topic ? 'border-red-400' : 'border-gray-200/70 dark:border-gray-600/50 focus:border-blue-400'
                   }`}
@@ -136,7 +138,7 @@ export default function AssignmentForm({ onSubmit }) {
                 Số lượng câu hỏi
               </label>
               <div className="relative">
-                <input
+                <Input
                   type="number"
                   min={1}
                   max={30}
@@ -191,7 +193,7 @@ export default function AssignmentForm({ onSubmit }) {
                         : 'bg-gray-100/70 dark:bg-gray-800/50 border-gray-200/70 dark:border-gray-600/50 text-gray-700 dark:text-gray-200 hover:bg-gray-200/70 dark:hover:bg-gray-700/50'
                     }`}
                   >
-                    <input
+                    <Input
                       type="checkbox"
                       className="sr-only"
                       checked={selectedTypes.includes(type.value)}
@@ -220,7 +222,7 @@ export default function AssignmentForm({ onSubmit }) {
             </div>
 
             {/* Submit Button */}
-            <button
+            <Button
               type="submit"
               disabled={isLoading || !topic || selectedTypes.length === 0 || !numQuestions}
               className={`w-full py-4 px-6 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 ${
@@ -240,7 +242,7 @@ export default function AssignmentForm({ onSubmit }) {
                   Tạo bài tập ngay
                 </div>
               )}
-            </button>
+            </Button>
           </form>
         </div>
       </div>

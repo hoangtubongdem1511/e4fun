@@ -1,10 +1,10 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
-import DictionaryPage from "./pages/DictionaryPage";
-import WritingPage from "./pages/WritingPage";
-import ChatbotPage from "./pages/ChatbotPage";
-import AssignmentPage from "./pages/AssignmentPage";
-import Layout from "./components/Layout";
+import Home from "@/pages/Home";
+import DictionaryPage from "@/pages/DictionaryPage";
+import WritingPage from "@/pages/WritingPage";
+import ChatbotPage from "@/pages/ChatbotPage";
+import AssignmentPage from "@/pages/AssignmentPage";
+import Layout from "@/components/common/Layout";
 
 function App() {
   return (

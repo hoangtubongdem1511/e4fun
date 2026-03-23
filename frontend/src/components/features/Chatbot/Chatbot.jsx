@@ -1,7 +1,10 @@
 import { useState, useRef, useEffect } from "react";
-import axios from "axios";
 import ReactMarkdown from "react-markdown";
 import { useDropzone } from "react-dropzone";
+import { sendChatMessageText, uploadImage } from "@/services/chatbotService";
+import Modal from "@/components/ui/Modal";
+import Button from "@/components/ui/Button";
+import Input from "@/components/ui/Input";
 
 export default function Chatbot() {
   const [messages, setMessages] = useState([]);
@@ -30,12 +33,8 @@ export default function Chatbot() {
         try {
           const formData = new FormData();
           formData.append('image', file);
-          const response = await axios.post('http://localhost:5000/api/upload', formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data'
-            }
-          });
-          uploadedUrls.push(response.data.url);
+          const response = await uploadImage(formData);
+          uploadedUrls.push(response.url);
         } catch (error) {
           console.error('Upload error:', error);
           alert('Lỗi upload ảnh. Vui lòng thử lại.');
@@ -70,16 +69,15 @@ export default function Chatbot() {
     setIsLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:5000/api/chatbot", { 
-        message: input, 
+      const text = await sendChatMessageText({
+        message: input,
         images: uploadedImages,
-        deepThink 
+        deepThink,
       });
-      
       const aiMessage = {
         id: Date.now() + 1,
         role: 'ai',
-        content: res.data.candidates?.[0]?.content?.parts?.[0]?.text || "Không có phản hồi",
+        content: text,
         timestamp: new Date().toLocaleTimeString()
       };
 
@@ -139,30 +137,30 @@ export default function Chatbot() {
       </div>
 
       {/* Clear Chat Confirmation Modal */}
-      {showClearConfirm && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white/90 dark:bg-white/10 backdrop-blur-sm p-6 rounded-2xl border border-gray-200/80 dark:border-white/20 shadow-2xl max-w-sm mx-4">
-            <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Xác nhận xóa</h3>
-            <p className="text-gray-600 dark:text-gray-300 mb-4">
-              Bạn có chắc chắn muốn xóa toàn bộ cuộc trò chuyện này? Hành động này không thể hoàn tác.
-            </p>
-            <div className="flex space-x-3">
-              <button
-                onClick={() => setShowClearConfirm(false)}
-                className="flex-1 px-4 py-2 bg-gray-100/70 dark:bg-gray-800/50 text-gray-700 dark:text-gray-300 border border-gray-200/70 dark:border-gray-600/50 rounded-xl hover:bg-gray-200/70 dark:hover:bg-gray-700/50 transition-all duration-300"
-              >
-                Hủy
-              </button>
-              <button
-                onClick={clearChat}
-                className="flex-1 px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-all duration-300"
-              >
-                Xóa
-              </button>
-            </div>
+      <Modal
+        open={showClearConfirm}
+        title="Xác nhận xóa"
+        actions={
+          <div className="flex space-x-3">
+            <Button
+              onClick={() => setShowClearConfirm(false)}
+              className="flex-1 px-4 py-2 bg-gray-100/70 dark:bg-gray-800/50 text-gray-700 dark:text-gray-300 border border-gray-200/70 dark:border-gray-600/50 rounded-xl hover:bg-gray-200/70 dark:hover:bg-gray-700/50 transition-all duration-300"
+            >
+              Hủy
+            </Button>
+            <Button
+              onClick={clearChat}
+              className="flex-1 px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-all duration-300"
+            >
+              Xóa
+            </Button>
           </div>
-        </div>
-      )}
+        }
+      >
+        <p className="text-gray-600 dark:text-gray-300 mb-4">
+          Bạn có chắc chắn muốn xóa toàn bộ cuộc trò chuyện này? Hành động này không thể hoàn tác.
+        </p>
+      </Modal>
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-6 space-y-4">
@@ -279,8 +277,8 @@ export default function Chatbot() {
         <form onSubmit={sendMessage} className="flex space-x-3">
           {/* Upload Button */}
           <div {...getRootProps()} className="cursor-pointer">
-            <input {...getInputProps()} />
-            <button
+            <Input {...getInputProps()} />
+            <Button
               type="button"
               className={`px-4 py-3 rounded-xl transition-all duration-300 ${
                 isDragActive 
@@ -289,17 +287,17 @@ export default function Chatbot() {
               }`}
             >
               📷
-            </button>
+            </Button>
           </div>
           
-          <input
+          <Input
             className="flex-1 px-4 py-3 bg-gray-100/70 dark:bg-gray-800/50 border-2 border-gray-200/70 dark:border-gray-600/50 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400 transition-all duration-300"
             placeholder="Nhập tin nhắn..."
             value={input}
             onChange={e => setInput(e.target.value)}
             disabled={isLoading}
           />
-          <button
+          <Button
             type="submit"
             disabled={isLoading || (!input.trim() && uploadedImages.length === 0)}
             className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
@@ -315,7 +313,7 @@ export default function Chatbot() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
               </svg>
             )}
-          </button>
+          </Button>
         </form>
       </div>
     </div>
