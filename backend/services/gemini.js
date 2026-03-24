@@ -1,4 +1,6 @@
 const axios = require('axios');
+const logger = require('../utils/logger');
+const { dictionaryPrompt, writingPrompt, assignmentPrompt } = require('../constants/prompts');
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
@@ -9,20 +11,8 @@ const GEMINI_API_URL =
   GEMINI_API_KEY;
 
 // Hàm gọi Gemini cho từ điển
-async function getDictionary(word, context) {
-  const prompt = `
-Hãy tra cứu từ "${word}" trong tiếng Anh và trả lời theo đúng cấu trúc sau (bằng markdown, ghi rõ số thứ tự và tiêu đề từng mục, kết quả trả về bằng tiếng việt):
-
-"${word}"
-1. Phát âm
-2. Giải nghĩa
-3. Ứng dụng vào ngữ pháp
-4. Cụm từ và thành ngữ liên quan
-5. Thông tin thú vị và mẹo học từ này
-
-Nếu không có thông tin cho mục nào, hãy ghi 'Không có thông tin'.
-${context ? `\nNgữ cảnh: ${context}` : ''}
-  `;
+async function getDictionary(word, context, { requestId } = {}) {
+  const prompt = dictionaryPrompt(word, context);
   const response = await axios.post(GEMINI_API_URL, {
     contents: [{ parts: [{ text: prompt }] }]
   });
@@ -30,34 +20,16 @@ ${context ? `\nNgữ cảnh: ${context}` : ''}
 }
 
 // Hàm gọi Gemini cho luyện viết
-async function evaluateWriting(topic, content) {
-  const prompt = `Bạn là giáo viên tiếng Anh. Hãy chấm điểm và nhận xét bài viết tiếng Anh với đề bài: "${topic}". Nội dung: ${content}
-
-Hãy trả lời đúng theo cấu trúc sau (bằng markdown, ghi rõ số thứ tự và tiêu đề từng mục, kết quả trả về bằng tiếng việt):
-
-Nhận xét chung
-1. Điểm số (trên thang 10)
-2. Điểm mạnh
-3. Điểm yếu
-4. Phản hồi cụ thể và đề xuất cải tiến
-
-Nếu không có thông tin cho mục nào, hãy ghi 'Không có thông tin'.`;
+async function evaluateWriting(topic, content, { requestId } = {}) {
+  const prompt = writingPrompt(topic, content);
   const response = await axios.post(GEMINI_API_URL, {
     contents: [{ parts: [{ text: prompt }] }]
   });
   return response.data;
 }
 
-async function generateAssignment(topic, numQuestions, questionTypes) {
-  const prompt = `
-Hãy tạo ${numQuestions} câu hỏi tiếng Anh về chủ đề "${topic}" với các dạng: ${questionTypes.join(', ')}.
-Trả về kết quả dưới dạng JSON, mỗi phần tử gồm:
-- question: nội dung câu hỏi
-- options: mảng các đáp án
-- answer: chỉ 1 đáp án đúng (string, KHÔNG được trả về nhiều đáp án)
-- explanation: giải thích đáp án đúng bằng tiếng việt
-Chỉ trả về 1 đáp án đúng duy nhất cho mỗi câu hỏi.
-`;
+async function generateAssignment(topic, numQuestions, questionTypes, { requestId } = {}) {
+  const prompt = assignmentPrompt(topic, numQuestions, questionTypes);
   const response = await axios.post(GEMINI_API_URL, {
     contents: [{ parts: [{ text: prompt }] }]
   });
@@ -65,7 +37,7 @@ Chỉ trả về 1 đáp án đúng duy nhất cho mỗi câu hỏi.
 }
 
 // Hàm gọi Gemini cho chatbot
-async function chatWithAI({ message, images, deepThink, googleSearch }) {
+async function chatWithAI({ message, images, deepThink, googleSearch }, { requestId } = {}) {
   let prompt = message;
   if (deepThink) prompt = "Hãy suy nghĩ sâu sắc trước khi trả lời: " + prompt;
   if (googleSearch) prompt += " (Hãy xác minh thông tin bằng Google Search nếu cần)";
@@ -74,7 +46,7 @@ async function chatWithAI({ message, images, deepThink, googleSearch }) {
   const parts = [{ text: prompt }];
   if (images && images.length > 0) {
     try {
-      console.log('Processing images:', images.length, 'images');
+      logger.info({ requestId, imageCount: images.length }, 'Processing images');
       
       // Sử dụng Gemini model cho ảnh (multimodal)
       const visionApiUrl =
@@ -92,7 +64,7 @@ async function chatWithAI({ message, images, deepThink, googleSearch }) {
       for (let i = 0; i < images.length; i++) {
         const imageUrl = images[i];
         try {
-          console.log(`Processing image ${i + 1}:`, imageUrl);
+          logger.info({ requestId, index: i + 1, imageUrl }, 'Processing image');
           
           // Download ảnh từ URL và convert thành base64
           const imageResponse = await axios.get(imageUrl, {
@@ -100,7 +72,7 @@ async function chatWithAI({ message, images, deepThink, googleSearch }) {
           });
           
           const base64Image = Buffer.from(imageResponse.data, 'binary').toString('base64');
-          console.log(`Image ${i + 1} converted to base64, length:`, base64Image.length);
+          logger.info({ requestId, index: i + 1, base64Length: base64Image.length }, 'Image converted to base64');
           
           visionParts.push({
             inline_data: {
@@ -109,21 +81,27 @@ async function chatWithAI({ message, images, deepThink, googleSearch }) {
             }
           });
         } catch (imageError) {
-          console.error(`Error processing image ${i + 1}:`, imageError);
+          logger.warn(
+            { requestId, index: i + 1, error: imageError?.message || String(imageError) },
+            'Error processing image',
+          );
           // Bỏ qua ảnh lỗi và tiếp tục với ảnh khác
         }
       }
       
-      console.log('Sending request to Gemini Vision API with', visionParts.length - 1, 'images');
+      logger.info({ requestId, imageCount: visionParts.length - 1 }, 'Sending request to Gemini Vision API');
       
       const response = await axios.post(visionApiUrl, {
         contents: [{ parts: visionParts }]
       });
       
-      console.log('Vision API response received');
+      logger.info({ requestId }, 'Vision API response received');
       return response.data;
     } catch (error) {
-      console.error('Vision API error:', error.response?.data || error.message);
+      logger.error(
+        { requestId, visionError: error.response?.data || error.message },
+        'Vision API error',
+      );
       
       // Fallback to text-only if vision fails
       let fallbackMessage = "Xin lỗi, tôi không thể phân tích ảnh lúc này.";

@@ -1,16 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const { getDictionary } = require('../services/gemini');
+const { validateBody } = require('../middleware/validate');
+const { dictionaryRequestSchema } = require('../validators/dictionary.schemas');
+const asyncHandler = require('../utils/asyncHandler');
+const { postDictionary } = require('../controllers/dictionary.controller');
 
-router.post('/', async (req, res) => {
-  const { word, context } = req.body;
-  try {
-    const result = await getDictionary(word, context);
-    res.json(result);
-  } catch (err) {
-    console.error("Gemini API error:", err?.response?.data || err.message || err);
-    res.status(500).json({ error: 'Failed to fetch dictionary data', detail: err?.response?.data || err.message });
-  }
-});
+router.post('/', validateBody(dictionaryRequestSchema), asyncHandler(postDictionary));
 
 module.exports = router;

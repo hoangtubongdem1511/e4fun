@@ -1,15 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const { evaluateWriting } = require('../services/gemini');
+const { validateBody } = require('../middleware/validate');
+const { writingRequestSchema } = require('../validators/writing.schemas');
+const asyncHandler = require('../utils/asyncHandler');
+const { postWriting } = require('../controllers/writing.controller');
 
-router.post('/', async (req, res) => {
-  const { topic, content } = req.body;
-  try {
-    const result = await evaluateWriting(topic, content);
-    res.json(result);
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to evaluate writing' });
-  }
-});
+router.post('/', validateBody(writingRequestSchema), asyncHandler(postWriting));
 
 module.exports = router;
