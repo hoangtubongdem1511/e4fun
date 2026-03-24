@@ -6,46 +6,45 @@ export default function Navbar() {
   const isDark = theme === "dark";
 
   return (
-    <nav className="bg-white/80 dark:bg-white/10 backdrop-blur-sm border-b border-gray-200/80 dark:border-white/20 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+    <nav className="bg-white/80 dark:bg-white/10 backdrop-blur-sm border-b border-gray-200/80 dark:border-white/20 fixed top-0 left-0 right-0 z-50">
+      <div className="w-full px-4 sm:px-5 lg:px-20">
+        <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
-              <span className="text-white font-bold text-xl">E4</span>
+            <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+              <span className="text-white font-bold text-2xl">E4</span>
             </div>
-            {/* <span className="text-white font-bold text-xl">E4Fun</span> */}
           </Link>
 
           {/* Navigation Links */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-12">
             <Link
               to="/"
-              className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200 font-medium"
+              className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200 font-semibold text-lg"
             >
               Trang chủ
             </Link>
             <Link
               to="/dictionary"
-              className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200 font-medium"
+              className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200 font-semibold text-lg"
             >
               Từ điển
             </Link>
             <Link
               to="/writing"
-              className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200 font-medium"
+              className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200 font-semibold text-lg"
             >
               Luyện viết
             </Link>
             <Link
               to="/chatbot"
-              className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200 font-medium"
+              className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200 font-semibold text-lg"
             >
               Tư vấn
             </Link>
             <Link
               to="/assignment"
-              className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200 font-medium"
+              className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200 font-semibold text-lg"
             >
               Bài tập
             </Link>
@@ -55,12 +54,12 @@ export default function Navbar() {
               type="button"
               onClick={toggleTheme}
               aria-label={isDark ? "Chuyển sang Light mode" : "Chuyển sang Dark mode"}
-              className="ml-2 inline-flex items-center justify-center p-2 rounded-xl bg-white/60 dark:bg-white/10 border border-gray-200/80 dark:border-white/20 hover:bg-white/80 dark:hover:bg-white/20 transition-colors"
+              className="ml-2 inline-flex items-center justify-center p-3 rounded-xl bg-white/60 dark:bg-white/10 border border-gray-200/80 dark:border-white/20 hover:bg-white/80 dark:hover:bg-white/20 transition-colors"
             >
               {isDark ? (
                 // Sun icon
                 <svg
-                  className="w-5 h-5 text-gray-800 dark:text-white"
+                  className="w-6 h-6 text-gray-800 dark:text-white"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -81,7 +80,7 @@ export default function Navbar() {
               ) : (
                 // Moon icon
                 <svg
-                  className="w-5 h-5 text-gray-800 dark:text-white"
+                  className="w-6 h-6 text-gray-800 dark:text-white"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -103,11 +102,11 @@ export default function Navbar() {
                 type="button"
                 onClick={toggleTheme}
                 aria-label={isDark ? "Chuyển sang Light mode" : "Chuyển sang Dark mode"}
-                className="inline-flex items-center justify-center p-2 rounded-xl bg-white/60 dark:bg-white/10 border border-gray-200/80 dark:border-white/20 hover:bg-white/80 dark:hover:bg-white/20 transition-colors"
+                className="inline-flex items-center justify-center p-3 rounded-xl bg-white/60 dark:bg-white/10 border border-gray-200/80 dark:border-white/20 hover:bg-white/80 dark:hover:bg-white/20 transition-colors"
               >
                 {isDark ? (
                   <svg
-                    className="w-5 h-5 text-gray-800 dark:text-white"
+                    className="w-6 h-6 text-gray-800 dark:text-white"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -127,7 +126,7 @@ export default function Navbar() {
                   </svg>
                 ) : (
                   <svg
-                    className="w-5 h-5 text-gray-800 dark:text-white"
+                    className="w-6 h-6 text-gray-800 dark:text-white"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -143,7 +142,7 @@ export default function Navbar() {
               {/* Hamburger (existing placeholder) */}
               <button className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
                 <svg
-                  className="w-6 h-6"
+                  className="w-7 h-7"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
