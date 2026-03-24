@@ -75,13 +75,12 @@ export default function AssignmentForm({ onSubmit }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-4">
+    <div className="min-h-screen p-4">
       <div className="max-w-4xl mx-auto">
-        {/* Header Card */}
-        <div className="bg-white/80 dark:bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-6 text-center border border-gray-200/80 dark:border-white/20">
-          {/* <div className="text-4xl mb-4">📚</div> */}
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Tạo Bài Tập</h1>
-          <p className="text-gray-600 dark:text-gray-200 text-lg">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">Tạo bài tập</h1>
+          <p className="text-gray-600 dark:text-gray-300 text-lg">
             Thiết lập bài tập phù hợp với nhu cầu học tập của bạn
           </p>
         </div>
@@ -135,13 +134,13 @@ export default function AssignmentForm({ onSubmit }) {
             {/* Number of Questions Section */}
             <div className="space-y-4">
               <label className="block text-gray-900 dark:text-white font-semibold text-lg">
-                Số lượng câu hỏi
+                Số lượng câu hỏi 
               </label>
               <div className="relative">
                 <Input
                   type="number"
-                  min={1}
-                  max={30}
+                  min={2}
+                  max={15}
                   className={`w-full px-6 py-4 rounded-xl bg-gray-100/70 dark:bg-gray-800/50 border-2 border-gray-200/70 dark:border-gray-600/50 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300 ${
                     errors.numQuestions ? 'border-red-400' : 'border-gray-200/70 dark:border-gray-600/50 focus:border-blue-400'
                   }`}
@@ -161,7 +160,7 @@ export default function AssignmentForm({ onSubmit }) {
               
               {/* Quick number buttons */}
               <div className="flex gap-2">
-                {[5, 10, 15, 20].map((num) => (
+                {[5, 10, 15].map((num) => (
                   <button
                     type="button"
                     key={num}

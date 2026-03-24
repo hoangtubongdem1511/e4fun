@@ -27,17 +27,56 @@ export function parseQuizListText(quizListText) {
   text = text.trim();
 
   try {
-    return JSON.parse(text);
+    const parsed = JSON.parse(text);
+    // Khi model trả về 1 câu, đôi khi sẽ là object thay vì array.
+    if (Array.isArray(parsed)) return parsed;
+    if (parsed && typeof parsed === "object") return [parsed];
+    return [];
   } catch (e) {
     console.error("Parse error:", e, text);
     return [];
   }
 }
 
+function normalizeQuestionItem(item, idx) {
+  if (!item || typeof item !== "object") return null;
+
+  const questionText =
+    typeof item.question === "string" && item.question.trim()
+      ? item.question.trim()
+      : `Câu ${idx + 1}`;
+
+  const options = Array.isArray(item.options)
+    ? item.options.filter((opt) => typeof opt === "string" && opt.trim())
+    : [];
+
+  if (options.length === 0) return null;
+
+  let answer = item.answer;
+  if (typeof answer === "undefined" && typeof item.answerIndex === "number") {
+    answer = options[item.answerIndex];
+  }
+  if (typeof answer !== "string" || !answer.trim()) {
+    answer = options[0];
+  }
+
+  return {
+    ...item,
+    question: questionText,
+    options,
+    answer,
+    explanation:
+      typeof item.explanation === "string" ? item.explanation : "",
+  };
+}
+
 export async function generateAssignmentQuestions(data) {
   const resData = await generateAssignment(data);
   const quizListText = extractQuizListText(resData);
-  return parseQuizListText(quizListText);
+  const parsed = parseQuizListText(quizListText);
+  return parsed
+    .map((item, idx) => normalizeQuestionItem(item, idx))
+    .filter(Boolean);
 }
 
 export async function gradeAssignment(payload) {

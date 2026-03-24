@@ -11,6 +11,12 @@ export default function QuizGame({ questions, onSubmit }) {
     return <div className="text-red-500 text-center p-8">Không có dữ liệu bài tập hợp lệ.</div>;
   }
 
+  const currentQuestion = questions[current];
+  const currentOptions = Array.isArray(currentQuestion?.options) ? currentQuestion.options : [];
+  if (!currentQuestion || currentOptions.length === 0) {
+    return <div className="text-red-500 text-center p-8">Dữ liệu câu hỏi không hợp lệ.</div>;
+  }
+
   const handleSelect = (idx) => {
     setAnswers(ans => {
       const copy = [...ans];
@@ -29,7 +35,7 @@ export default function QuizGame({ questions, onSubmit }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-4">
+    <div className="min-h-screen p-4">
       <div className="max-w-4xl mx-auto">
         <div className="bg-white/80 dark:bg-white/10 backdrop-blur-sm rounded-2xl p-8 shadow-2xl border border-gray-200/80 dark:border-white/20">
           {/* Progress Bar & Info */}
@@ -67,12 +73,12 @@ export default function QuizGame({ questions, onSubmit }) {
           {/* Question */}
           <div className="text-2xl text-gray-900 dark:text-white font-semibold mb-6 min-h-[56px] flex items-center">
             {/* <span className="mr-3 bg-blue-500 text-white rounded-full w-10 h-10 flex items-center justify-center font-bold text-lg">{current + 1}</span> */}
-            <span>{questions[current].question}</span>
+            <span>{currentQuestion.question}</span>
           </div>
 
           {/* Answer Options */}
           <div className="space-y-3 mb-8">
-            {questions[current].options.map((opt, idx) => (
+            {currentOptions.map((opt, idx) => (
               <button
                 key={idx}
                 className={`w-full text-left px-6 py-4 rounded-xl border-2 font-medium text-lg transition-all duration-200 shadow-sm

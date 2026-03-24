@@ -4,7 +4,7 @@ export default function QuizResult({ results, score, total, onRetry }) {
   const wrongCount = total - correctCount;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-4">
+    <div className="min-h-screen p-4">
       <div className="max-w-4xl mx-auto">
         {/* Header với điểm số */}
         <div className="bg-white/80 dark:bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 border border-gray-200/80 dark:border-white/20">

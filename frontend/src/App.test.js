@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+jest.mock("@/components/common/InteractiveBackground", () => () => null);
 import App from "@/App";
 
 test("renders home heading", () => {
