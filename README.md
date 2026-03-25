@@ -90,11 +90,6 @@ Tạo file `.env` trong thư mục `backend`:
 # Google Gemini API
 GOOGLE_API_KEY=your_gemini_api_key_here
 
-# Cloudinary Configuration
-CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
-CLOUDINARY_API_KEY=your_cloudinary_api_key
-CLOUDINARY_API_SECRET=your_cloudinary_api_secret
-
 # Server Configuration
 PORT=5000
 NODE_ENV=development
@@ -153,10 +148,8 @@ e4fun/
 │   │   ├── assignment.js      # Quiz generation & grading
 │   │   ├── chatbot.js         # AI chat functionality
 │   │   ├── dictionary.js      # Dictionary lookup
-│   │   ├── upload.js          # Image upload
 │   │   └── writing.js         # Writing assessment
 │   ├── services/              # External services
-│   │   ├── cloudinary.js      # Image storage
 │   │   └── gemini.js          # AI integration
 │   └── package.json
 ├── frontend/

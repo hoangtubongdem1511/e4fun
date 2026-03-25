@@ -13,8 +13,3 @@ export async function sendChatMessageText(payload) {
   const resData = await sendChatMessage(payload);
   return extractChatbotText(resData);
 }
-
-export async function uploadImage(formData) {
-  const res = await api.post("/api/upload", formData);
-  return res.data;
-}

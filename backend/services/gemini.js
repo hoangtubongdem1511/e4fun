@@ -37,16 +37,16 @@ async function generateAssignment(topic, numQuestions, questionTypes, { requestI
 }
 
 // Hàm gọi Gemini cho chatbot
-async function chatWithAI({ message, images, deepThink, googleSearch }, { requestId } = {}) {
-  let prompt = message;
+async function chatWithAI({ message, files, deepThink, googleSearch }, { requestId } = {}) {
+  let prompt = message || '';
   if (deepThink) prompt = "Hãy suy nghĩ sâu sắc trước khi trả lời: " + prompt;
   if (googleSearch) prompt += " (Hãy xác minh thông tin bằng Google Search nếu cần)";
   
   // Xử lý ảnh nếu có
   const parts = [{ text: prompt }];
-  if (images && images.length > 0) {
+  if (files && files.length > 0) {
     try {
-      logger.info({ requestId, imageCount: images.length }, 'Processing images');
+      logger.info({ requestId, imageCount: files.length }, 'Processing images');
       
       // Sử dụng Gemini model cho ảnh (multimodal)
       const visionApiUrl =
@@ -61,22 +61,17 @@ async function chatWithAI({ message, images, deepThink, googleSearch }, { reques
       // Chuẩn bị parts với ảnh
       const visionParts = [{ text: imagePrompt }];
       
-      for (let i = 0; i < images.length; i++) {
-        const imageUrl = images[i];
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
         try {
-          logger.info({ requestId, index: i + 1, imageUrl }, 'Processing image');
-          
-          // Download ảnh từ URL và convert thành base64
-          const imageResponse = await axios.get(imageUrl, {
-            responseType: 'arraybuffer'
-          });
-          
-          const base64Image = Buffer.from(imageResponse.data, 'binary').toString('base64');
+          logger.info({ requestId, index: i + 1, mimeType: file.mimetype, size: file.size }, 'Processing image');
+
+          const base64Image = Buffer.from(file.buffer).toString('base64');
           logger.info({ requestId, index: i + 1, base64Length: base64Image.length }, 'Image converted to base64');
           
           visionParts.push({
             inline_data: {
-              mime_type: "image/jpeg",
+              mime_type: file.mimetype || "image/jpeg",
               data: base64Image
             }
           });

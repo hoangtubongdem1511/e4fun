@@ -25,10 +25,11 @@ describe('Error Schema', () => {
     expect(res.body.error).toHaveProperty('message', 'Not Found');
   });
 
-  test('POST /api/upload (invalid file type) returns 400 + UPLOAD_ERROR schema', async () => {
+  test('POST /api/chatbot (invalid file type) returns 400 + UPLOAD_ERROR schema', async () => {
     const res = await request(app)
-      .post('/api/upload')
-      .attach('image', Buffer.from('not an image'), 'a.txt');
+      .post('/api/chatbot')
+      .field('message', 'hello')
+      .attach('images', Buffer.from('not an image'), 'a.txt');
 
     expect(res.statusCode).toBe(400);
     expect(res.body).toHaveProperty('requestId');
