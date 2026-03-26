@@ -1,7 +1,7 @@
 const axios = require('axios');
 const logger = require('../utils/logger');
 const { dictionaryPrompt, writingPrompt, assignmentPrompt } = require('../constants/prompts');
-const chatbotScopePrompt = require('../constants/chatScope');
+const chatbotScopePrompt = require('../constants/chatPrompt');
 
 const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
 const SERVER_GEMINI_API_KEY = process.env.GEMINI_API_KEY;
@@ -45,8 +45,8 @@ async function getDictionary(word, context, { requestId, apiKey } = {}) {
 }
 
 // Hàm gọi Gemini cho luyện viết
-async function evaluateWriting(topic, content, { requestId, apiKey } = {}) {
-  const prompt = writingPrompt(topic, content);
+async function evaluateWriting(topic, content, { requestId, apiKey, level } = {}) {
+  const prompt = writingPrompt(topic, content, level);
   const response = await axios.post(buildGeminiApiUrl(apiKey), {
     contents: [{ parts: [{ text: prompt }] }],
   });

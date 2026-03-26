@@ -14,9 +14,24 @@ const WRITING_TOPICS = [
   "Cultural differences"
 ];
 
+const LEVELS = ["A1", "A2", "B1", "B2", "C1", "C2"];
+
+function getInitialWritingLevel() {
+  try {
+    const raw = window.localStorage.getItem("e4fun.onboarding");
+    const parsed = raw ? JSON.parse(raw) : null;
+    const lvl = parsed?.level;
+    if (LEVELS.includes(lvl)) return lvl;
+  } catch {
+    // ignore
+  }
+  return "B1";
+}
+
 export default function WritingPractice() {
   const [topic, setTopic] = useState("");
   const [content, setContent] = useState("");
+  const [level, setLevel] = useState(getInitialWritingLevel);
   const [result, setResult] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -30,7 +45,7 @@ export default function WritingPractice() {
     setResult("");
     
     try {
-      const text = await analyzeWritingText({ topic, content });
+      const text = await analyzeWritingText({ topic, content, level });
       if (!text) setError("Không thể phân tích bài viết. Vui lòng thử lại.");
       else setResult(text);
     } catch (err) {
@@ -101,6 +116,25 @@ export default function WritingPractice() {
                 {wordCount} từ
               </div>
             </div>
+          </div>
+
+          {/* Level Select */}
+          <div>
+            <label className="block text-gray-900 dark:text-white font-semibold text-lg mb-3">
+              Trình độ CEFR (level)
+            </label>
+            <select
+              value={level}
+              onChange={(e) => setLevel(e.target.value)}
+              disabled={isLoading}
+              className="w-full px-4 py-4 bg-gray-100/70 dark:bg-gray-800/50 border-2 border-gray-200/70 dark:border-gray-600/50 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-green-400 transition-all duration-300"
+            >
+              {LEVELS.map((lvl) => (
+                <option key={lvl} value={lvl}>
+                  {lvl}
+                </option>
+              ))}
+            </select>
           </div>
 
           {/* Submit Button */}
