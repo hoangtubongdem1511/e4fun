@@ -1,6 +1,8 @@
 const axios = require('axios');
 const logger = require('../utils/logger');
-const { dictionaryPrompt, writingPrompt, assignmentPrompt } = require('../constants/prompts');
+const { dictionaryPrompt } = require('../constants/dictionaryPrompt');
+const { writingPrompt } = require('../constants/writingPrompt');
+const { assignmentPrompt } = require('../constants/assignmentPrompt');
 const chatbotScopePrompt = require('../constants/chatPrompt');
 
 const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
