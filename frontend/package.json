@@ -20,7 +20,8 @@
     "react-router-dom": "^7.6.2",
     "react-scripts": "^5.0.1",
     "tsparticles": "^3.9.1",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "zod": "^4.3.6"
   },
   "scripts": {
     "start": "craco start",
