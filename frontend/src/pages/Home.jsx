@@ -48,8 +48,7 @@ export default function Home() {
               Học tiếng Anh thông minh cùng AI Gemini. Từ điển, luyện viết, tư vấn và bài tập tương tác.
             </p>
             
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
+            {/* <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
               <Link 
                 to="/assignment" 
                 className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold py-4 px-8 rounded-2xl text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
@@ -62,27 +61,21 @@ export default function Home() {
               >
                 Hỏi AI tutor
               </Link>
-            </div>
+            </div> */}
           </div>
         </div>
-
-        {/* Background Elements */}
-        {/* <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl"></div>
-        </div> */}
       </div>
 
       {/* Features Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-        <div className="text-center mb-16">
+        {/* <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
             Tính năng nổi bật
           </h2>
           <p className="text-gray-600 dark:text-gray-300 text-lg max-w-2xl mx-auto">
             Khám phá các công cụ học tiếng Anh hiện đại được hỗ trợ bởi AI
           </p>
-        </div>
+        </div> */}
 
         {/* Feature Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

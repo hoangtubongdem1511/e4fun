@@ -16,38 +16,7 @@ export default function Navbar() {
             </div>
           </Link>
 
-          {/* Navigation Links */}
           <div className="hidden md:flex items-center space-x-12">
-            <Link
-              to="/"
-              className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200 font-semibold text-lg"
-            >
-              Trang chủ
-            </Link>
-            <Link
-              to="/dictionary"
-              className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200 font-semibold text-lg"
-            >
-              Từ điển
-            </Link>
-            <Link
-              to="/writing"
-              className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200 font-semibold text-lg"
-            >
-              Luyện viết
-            </Link>
-            <Link
-              to="/chatbot"
-              className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200 font-semibold text-lg"
-            >
-              Tư vấn
-            </Link>
-            <Link
-              to="/assignment"
-              className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200 font-semibold text-lg"
-            >
-              Bài tập
-            </Link>
 
             {/* Theme toggle */}
             <button
