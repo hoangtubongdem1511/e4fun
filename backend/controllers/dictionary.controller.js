@@ -21,9 +21,10 @@ async function postDictionary(req, res) {
     requestId: req.requestId,
     apiKey: req.geminiApiKey,
   });
-  // HTTP-level cache (best effort). Client/proxy có thể quyết định cache hay không với POST.
+
+  // HTTP-level cache (private): useful for repeated lookups in short interval.
   res.set('Cache-Control', 'private, max-age=60, stale-while-revalidate=30');
-  res.set('Vary', 'x-gemini-api-key, content-type');
+  res.set('Vary', 'x-gemini-api-key');
   return res.json(result);
 }
 

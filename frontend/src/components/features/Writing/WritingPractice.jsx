@@ -50,8 +50,7 @@ export default function WritingPractice() {
       else setResult(text);
     } catch (err) {
       console.error("Writing error:", err);
-      const backendMessage = err?.response?.data?.error?.message;
-      setError(backendMessage || "Có lỗi xảy ra khi phân tích bài viết. Vui lòng thử lại.");
+      setError("Có lỗi xảy ra khi phân tích bài viết. Vui lòng thử lại.");
     } finally {
       setIsLoading(false);
     }

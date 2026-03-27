@@ -1,18 +1,28 @@
 const axios = require('axios');
-const crypto = require('crypto');
 const logger = require('../utils/logger');
 const { dictionaryPrompt } = require('../constants/dictionaryPrompt');
 const { writingPrompt } = require('../constants/writingPrompt');
 const { assignmentPrompt } = require('../constants/assignmentPrompt');
 const chatbotScopePrompt = require('../constants/chatPrompt');
-const { clearExpired, getCache, setCache, getInflight, setInflight, clearInflight } = require('../utils/aiCache');
-const { mapAiError } = require('../utils/aiErrorMapper');
+const {
+  makeAiCacheKey,
+  getCachedResult,
+  setCachedResult,
+  getInflight,
+  setInflight,
+  clearInflight,
+} = require('../utils/aiCache');
+const { mapGeminiError } = require('../utils/aiErrorMapper');
 
 const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
 const SERVER_GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const DICTIONARY_CACHE_TTL_MS = 30 * 60 * 1000;
-const WRITING_CACHE_TTL_MS = 5 * 60 * 1000;
-const ASSIGNMENT_CACHE_TTL_MS = 10 * 60 * 1000;
+
+const CACHE_TTL = {
+  dictionary: 30 * 60 * 1000,
+  writing: 5 * 60 * 1000,
+  assignment: 10 * 60 * 1000,
+  chatbot: 0,
+};
 
 function buildGeminiApiUrl(apiKey) {
   // Back-compat: nếu không có per-user apiKey (header bị thiếu / chưa implement),
@@ -37,84 +47,82 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function safeApiKeyScope(apiKey) {
-  if (!apiKey || typeof apiKey !== 'string') return 'server_default';
-  return crypto.createHash('sha256').update(apiKey.trim()).digest('hex').slice(0, 12);
+function isRetryableStatus(status) {
+  return status === 429 || status === 503;
 }
 
-function buildCacheKey(endpoint, apiKey, payload) {
-  const payloadHash = crypto.createHash('sha256').update(JSON.stringify(payload)).digest('hex');
-  return `${endpoint}:${GEMINI_MODEL}:${safeApiKeyScope(apiKey)}:${payloadHash}`;
-}
-
-function isRetriableStatus(status) {
-  return status === 429 || status === 503 || status === 502 || status === 504;
-}
-
-async function postWithRetry(apiUrl, payload, { requestId, endpoint, retries = 1 } = {}) {
-  let lastErr;
-  for (let attempt = 0; attempt <= retries; attempt += 1) {
-    try {
-      return await axios.post(apiUrl, payload);
-    } catch (err) {
-      lastErr = err;
-      const status = err?.response?.status;
-      const canRetry = attempt < retries && isRetriableStatus(status);
-      if (!canRetry) break;
-      const backoffMs = Math.min(800 * (2 ** attempt) + Math.floor(Math.random() * 300), 2500);
-      logger.warn({ requestId, endpoint, attempt, status, backoffMs }, 'Gemini request retrying');
-      await sleep(backoffMs);
-    }
-  }
-  throw lastErr;
-}
-
-async function callGeminiWithPolicies({
+async function postGeminiWithResilience({
   endpoint,
-  payload,
   apiKey,
+  payload,
   requestId,
-  cacheTtlMs = 0,
-  useInflightDedupe = true,
-  retries = 1,
-} = {}) {
-  clearExpired();
-  const key = buildCacheKey(endpoint, apiKey, payload);
+  useResultCache = true,
+  useInflightDedup = true,
+  maxRetries = 0,
+  ttlMs = 0,
+}) {
+  const url = buildGeminiApiUrl(apiKey);
+  const key = makeAiCacheKey({
+    endpoint,
+    model: GEMINI_MODEL,
+    apiKey,
+    payload,
+  });
 
-  if (cacheTtlMs > 0) {
-    const cached = getCache(key);
-    if (typeof cached !== 'undefined') {
-      logger.info({ requestId, endpoint }, 'AI cache hit');
+  if (useResultCache && ttlMs > 0) {
+    const cached = getCachedResult(key);
+    if (cached) {
+      logger.info({ requestId, endpoint, cache: 'hit' }, 'AI cache hit');
       return cached;
     }
   }
 
-  if (useInflightDedupe) {
-    const inProgress = getInflight(key);
-    if (inProgress) {
-      logger.info({ requestId, endpoint }, 'AI inflight dedupe hit');
-      return inProgress;
+  if (useInflightDedup) {
+    const inflight = getInflight(key);
+    if (inflight) {
+      logger.info({ requestId, endpoint, cache: 'inflight-hit' }, 'AI inflight dedupe hit');
+      return inflight;
     }
   }
 
-  const work = (async () => {
-    const apiUrl = buildGeminiApiUrl(apiKey);
-    try {
-      const response = await postWithRetry(apiUrl, payload, { requestId, endpoint, retries });
-      if (cacheTtlMs > 0) setCache(key, response.data, cacheTtlMs);
-      return response.data;
-    } catch (err) {
-      throw mapAiError(err, { endpoint });
+  const requestPromise = (async () => {
+    let lastError = null;
+    for (let attempt = 0; attempt <= maxRetries; attempt += 1) {
+      try {
+        const response = await axios.post(url, payload);
+        if (useResultCache && ttlMs > 0) {
+          setCachedResult(key, response.data, ttlMs);
+          logger.info({ requestId, endpoint, cache: 'stored' }, 'AI cache stored');
+        }
+        return response.data;
+      } catch (err) {
+        lastError = err;
+        const status = err?.response?.status;
+        if (attempt < maxRetries && isRetryableStatus(status)) {
+          const backoffMs = 250 * 2 ** attempt + Math.floor(Math.random() * 120);
+          logger.warn(
+            { requestId, endpoint, attempt: attempt + 1, status, backoffMs },
+            'AI call retrying after transient error',
+          );
+          await sleep(backoffMs);
+          continue;
+        }
+        break;
+      }
     }
+    throw mapGeminiError(lastError, { endpoint });
   })();
 
-  if (useInflightDedupe) setInflight(key, work);
-
-  try {
-    return await work;
-  } finally {
-    if (useInflightDedupe) clearInflight(key);
+  if (useInflightDedup) {
+    setInflight(key, requestPromise);
+    try {
+      return await requestPromise;
+    } finally {
+      clearInflight(key);
+    }
   }
+
+  return requestPromise;
 }
 
 function buildChatbotScopePrompt(scopeObj) {
@@ -130,44 +138,50 @@ const CHATBOT_SCOPE_PROMPT = buildChatbotScopePrompt(chatbotScopePrompt);
 // Hàm gọi Gemini cho từ điển
 async function getDictionary(word, context, { requestId, apiKey } = {}) {
   const prompt = dictionaryPrompt(word, context);
-  return callGeminiWithPolicies({
+  return postGeminiWithResilience({
     endpoint: 'dictionary',
     apiKey,
     requestId,
-    cacheTtlMs: DICTIONARY_CACHE_TTL_MS,
-    retries: 2,
     payload: {
       contents: [{ parts: [{ text: prompt }] }],
     },
+    useResultCache: true,
+    useInflightDedup: true,
+    maxRetries: 2,
+    ttlMs: CACHE_TTL.dictionary,
   });
 }
 
 // Hàm gọi Gemini cho luyện viết
 async function evaluateWriting(topic, content, { requestId, apiKey, level } = {}) {
   const prompt = writingPrompt(topic, content, level);
-  return callGeminiWithPolicies({
+  return postGeminiWithResilience({
     endpoint: 'writing',
     apiKey,
     requestId,
-    cacheTtlMs: WRITING_CACHE_TTL_MS,
-    retries: 1,
     payload: {
       contents: [{ parts: [{ text: prompt }] }],
     },
+    useResultCache: true,
+    useInflightDedup: true,
+    maxRetries: 1,
+    ttlMs: CACHE_TTL.writing,
   });
 }
 
 async function generateAssignment(topic, numQuestions, questionTypes, { requestId, apiKey } = {}) {
   const prompt = assignmentPrompt(topic, numQuestions, questionTypes);
-  return callGeminiWithPolicies({
+  return postGeminiWithResilience({
     endpoint: 'assignment',
     apiKey,
     requestId,
-    cacheTtlMs: ASSIGNMENT_CACHE_TTL_MS,
-    retries: 2,
     payload: {
       contents: [{ parts: [{ text: prompt }] }],
     },
+    useResultCache: true,
+    useInflightDedup: true,
+    maxRetries: 2,
+    ttlMs: CACHE_TTL.assignment,
   });
 }
 
@@ -220,11 +234,9 @@ async function chatWithAI({ message, files, deepThink, googleSearch }, { request
       
       logger.info({ requestId, imageCount: visionParts.length - 1 }, 'Sending request to Gemini Vision API');
       
-      const response = await postWithRetry(
-        visionApiUrl,
-        { contents: [{ parts: visionParts }] },
-        { requestId, endpoint: 'chatbot_vision', retries: 1 },
-      );
+      const response = await axios.post(visionApiUrl, {
+        contents: [{ parts: visionParts }]
+      });
       
       logger.info({ requestId }, 'Vision API response received');
       return response.data;
@@ -237,36 +249,40 @@ async function chatWithAI({ message, files, deepThink, googleSearch }, { request
       // Fallback to text-only if vision fails
       let fallbackMessage = "Xin lỗi, tôi không thể phân tích ảnh lúc này.";
       
-      if (error.response?.data?.error?.code === 429) {
+      if (error.response?.data?.error?.code === 429 || error.response?.status === 429) {
         fallbackMessage = "Xin lỗi, tôi đã vượt quá giới hạn sử dụng cho tính năng phân tích ảnh. Bạn có thể:\n\n1. Thử lại sau vài phút\n2. Mô tả ảnh bằng lời để tôi có thể giúp bạn\n3. Kiểm tra quota API key của bạn";
       } else if (error.response?.data?.error?.message?.includes('not found')) {
         fallbackMessage = "Xin lỗi, model phân tích ảnh không khả dụng. Bạn có thể mô tả ảnh bằng lời để tôi có thể giúp bạn.";
       }
       
       const fallbackPrompt = prompt + "\n\n" + fallbackMessage;
-      try {
-        const response = await postWithRetry(
-          textApiUrl,
-          { contents: [{ parts: [{ text: fallbackPrompt }] }] },
-          { requestId, endpoint: 'chatbot_text_fallback', retries: 1 },
-        );
-        return response.data;
-      } catch (fallbackErr) {
-        throw mapAiError(fallbackErr, { endpoint: 'chatbot' });
-      }
+      return postGeminiWithResilience({
+        endpoint: 'chatbot',
+        apiKey,
+        requestId,
+        payload: {
+          contents: [{ parts: [{ text: fallbackPrompt }] }],
+        },
+        useResultCache: false,
+        useInflightDedup: true,
+        maxRetries: 1,
+        ttlMs: CACHE_TTL.chatbot,
+      });
     }
   } else {
     // Không có ảnh, sử dụng model text thường
-    try {
-      const response = await postWithRetry(
-        textApiUrl,
-        { contents: [{ parts }] },
-        { requestId, endpoint: 'chatbot', retries: 1 },
-      );
-      return response.data;
-    } catch (err) {
-      throw mapAiError(err, { endpoint: 'chatbot' });
-    }
+    return postGeminiWithResilience({
+      endpoint: 'chatbot',
+      apiKey,
+      requestId,
+      payload: {
+        contents: [{ parts }],
+      },
+      useResultCache: false,
+      useInflightDedup: true,
+      maxRetries: 1,
+      ttlMs: CACHE_TTL.chatbot,
+    });
   }
 }
 

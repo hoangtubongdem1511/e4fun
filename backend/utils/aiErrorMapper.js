@@ -1,73 +1,64 @@
 const AppError = require('./appError');
+const httpStatus = require('../constants/httpStatus');
 const errorCodes = require('../constants/errorCodes');
 
-const RATE_LIMIT_WARNING = 'CẢNH BÁO\nE4Fun đang bận đi chơi nên tạm thời vắng mặt.\nBạn yêu vui lòng ngồi đợi rồi tra lại thử nha.';
+const OVERLOADED_MESSAGE = 'Hệ thống đang quá tải, vui lòng thử lại sau ít phút.';
 
-function parseRetryAfterSeconds(raw) {
-  if (!raw) return undefined;
-  const n = Number(raw);
-  if (Number.isFinite(n) && n >= 0) return n;
-  return undefined;
+function endpointFallbackMessage(endpoint) {
+  if (endpoint === 'dictionary' || endpoint === 'writing') {
+    return OVERLOADED_MESSAGE;
+  }
+  if (endpoint === 'assignment') {
+    return 'Hệ thống tạo bài tập đang quá tải, vui lòng thử lại sau ít phút.';
+  }
+  if (endpoint === 'chatbot') {
+    return 'Chatbot đang quá tải, bạn vui lòng thử lại sau ít phút.';
+  }
+  return OVERLOADED_MESSAGE;
 }
 
-function mapAiError(error, { endpoint } = {}) {
-  const status = error?.response?.status;
-  const retryAfter = parseRetryAfterSeconds(error?.response?.headers?.['retry-after']);
-  const providerDetails = error?.response?.data || error?.message || String(error);
+function mapGeminiError(err, { endpoint } = {}) {
+  const statusCode = err?.response?.status || err?.statusCode;
+  const retryAfter = err?.response?.headers?.['retry-after'];
+  const providerDetails = err?.response?.data;
 
-  if (status === 429) {
-    const msg = endpoint === 'dictionary' || endpoint === 'writing'
-      ? RATE_LIMIT_WARNING
-      : 'Hệ thống AI đang quá tải. Vui lòng thử lại sau ít phút.';
+  if (statusCode === 429) {
     return new AppError({
-      statusCode: 429,
+      statusCode: httpStatus.TOO_MANY_REQUESTS,
       code: errorCodes.AI_PROVIDER_ERROR,
-      message: msg,
+      message: endpointFallbackMessage(endpoint),
       details: {
-        endpoint,
-        providerStatus: status,
-        retryAfter,
+        providerStatus: statusCode,
+        retryAfter: retryAfter || null,
       },
+      issues: providerDetails,
     });
   }
 
-  if (status === 503 || status === 502 || status === 504) {
+  if (statusCode === 503 || statusCode === 502 || statusCode === 504) {
     return new AppError({
-      statusCode: 503,
+      statusCode: httpStatus.BAD_GATEWAY,
       code: errorCodes.AI_PROVIDER_ERROR,
       message: 'Dịch vụ AI tạm thời không khả dụng. Vui lòng thử lại sau.',
-      details: {
-        endpoint,
-        providerStatus: status,
-      },
+      details: { providerStatus: statusCode },
+      issues: providerDetails,
     });
   }
 
-  if (status && status >= 400) {
+  if (err?.isAxiosError) {
     return new AppError({
-      statusCode: status,
+      statusCode: statusCode || httpStatus.BAD_GATEWAY,
       code: errorCodes.AI_PROVIDER_ERROR,
-      message: 'Có lỗi từ nhà cung cấp AI. Vui lòng thử lại.',
-      details: {
-        endpoint,
-        providerStatus: status,
-      },
+      message: err?.message || 'AI provider error',
+      details: providerDetails,
     });
   }
 
-  return new AppError({
-    statusCode: 500,
-    code: errorCodes.AI_PROVIDER_ERROR,
-    message: 'Không thể kết nối dịch vụ AI. Vui lòng thử lại sau.',
-    details: {
-      endpoint,
-      providerDetails,
-    },
-  });
+  return err;
 }
 
 module.exports = {
-  mapAiError,
-  RATE_LIMIT_WARNING,
+  mapGeminiError,
+  endpointFallbackMessage,
 };
 
