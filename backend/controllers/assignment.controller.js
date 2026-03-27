@@ -2,7 +2,10 @@ const { generateAssignment } = require('../services/gemini');
 
 async function postGenerate(req, res) {
   const { topic, numQuestions, questionTypes } = req.body;
-  const result = await generateAssignment(topic, numQuestions, questionTypes, { requestId: req.requestId });
+  const result = await generateAssignment(topic, numQuestions, questionTypes, {
+    requestId: req.requestId,
+    apiKey: req.geminiApiKey,
+  });
   return res.json(result);
 }
 

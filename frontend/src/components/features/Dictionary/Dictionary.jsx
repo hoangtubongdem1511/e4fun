@@ -24,7 +24,8 @@ export default function Dictionary() {
       else setResult(text);
     } catch (err) {
       console.error("Dictionary error:", err);
-      setError("Có lỗi xảy ra khi tra cứu. Vui lòng thử lại.");
+      const backendMessage = err?.response?.data?.error?.message;
+      setError(backendMessage || "Có lỗi xảy ra khi tra cứu. Vui lòng thử lại.");
     } finally {
       setIsLoading(false);
     }

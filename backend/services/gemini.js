@@ -1,12 +1,18 @@
 const axios = require('axios');
+const crypto = require('crypto');
 const logger = require('../utils/logger');
 const { dictionaryPrompt } = require('../constants/dictionaryPrompt');
 const { writingPrompt } = require('../constants/writingPrompt');
 const { assignmentPrompt } = require('../constants/assignmentPrompt');
 const chatbotScopePrompt = require('../constants/chatPrompt');
+const { clearExpired, getCache, setCache, getInflight, setInflight, clearInflight } = require('../utils/aiCache');
+const { mapAiError } = require('../utils/aiErrorMapper');
 
 const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
 const SERVER_GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const DICTIONARY_CACHE_TTL_MS = 30 * 60 * 1000;
+const WRITING_CACHE_TTL_MS = 5 * 60 * 1000;
+const ASSIGNMENT_CACHE_TTL_MS = 10 * 60 * 1000;
 
 function buildGeminiApiUrl(apiKey) {
   // Back-compat: nếu không có per-user apiKey (header bị thiếu / chưa implement),
@@ -27,6 +33,90 @@ function buildGeminiApiUrl(apiKey) {
   );
 }
 
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function safeApiKeyScope(apiKey) {
+  if (!apiKey || typeof apiKey !== 'string') return 'server_default';
+  return crypto.createHash('sha256').update(apiKey.trim()).digest('hex').slice(0, 12);
+}
+
+function buildCacheKey(endpoint, apiKey, payload) {
+  const payloadHash = crypto.createHash('sha256').update(JSON.stringify(payload)).digest('hex');
+  return `${endpoint}:${GEMINI_MODEL}:${safeApiKeyScope(apiKey)}:${payloadHash}`;
+}
+
+function isRetriableStatus(status) {
+  return status === 429 || status === 503 || status === 502 || status === 504;
+}
+
+async function postWithRetry(apiUrl, payload, { requestId, endpoint, retries = 1 } = {}) {
+  let lastErr;
+  for (let attempt = 0; attempt <= retries; attempt += 1) {
+    try {
+      return await axios.post(apiUrl, payload);
+    } catch (err) {
+      lastErr = err;
+      const status = err?.response?.status;
+      const canRetry = attempt < retries && isRetriableStatus(status);
+      if (!canRetry) break;
+      const backoffMs = Math.min(800 * (2 ** attempt) + Math.floor(Math.random() * 300), 2500);
+      logger.warn({ requestId, endpoint, attempt, status, backoffMs }, 'Gemini request retrying');
+      await sleep(backoffMs);
+    }
+  }
+  throw lastErr;
+}
+
+async function callGeminiWithPolicies({
+  endpoint,
+  payload,
+  apiKey,
+  requestId,
+  cacheTtlMs = 0,
+  useInflightDedupe = true,
+  retries = 1,
+} = {}) {
+  clearExpired();
+  const key = buildCacheKey(endpoint, apiKey, payload);
+
+  if (cacheTtlMs > 0) {
+    const cached = getCache(key);
+    if (typeof cached !== 'undefined') {
+      logger.info({ requestId, endpoint }, 'AI cache hit');
+      return cached;
+    }
+  }
+
+  if (useInflightDedupe) {
+    const inProgress = getInflight(key);
+    if (inProgress) {
+      logger.info({ requestId, endpoint }, 'AI inflight dedupe hit');
+      return inProgress;
+    }
+  }
+
+  const work = (async () => {
+    const apiUrl = buildGeminiApiUrl(apiKey);
+    try {
+      const response = await postWithRetry(apiUrl, payload, { requestId, endpoint, retries });
+      if (cacheTtlMs > 0) setCache(key, response.data, cacheTtlMs);
+      return response.data;
+    } catch (err) {
+      throw mapAiError(err, { endpoint });
+    }
+  })();
+
+  if (useInflightDedupe) setInflight(key, work);
+
+  try {
+    return await work;
+  } finally {
+    if (useInflightDedupe) clearInflight(key);
+  }
+}
+
 function buildChatbotScopePrompt(scopeObj) {
   if (!scopeObj || typeof scopeObj !== 'object') return '';
   const sections = [scopeObj.role, scopeObj.scope, scopeObj.behavior, scopeObj.hints]
@@ -40,27 +130,45 @@ const CHATBOT_SCOPE_PROMPT = buildChatbotScopePrompt(chatbotScopePrompt);
 // Hàm gọi Gemini cho từ điển
 async function getDictionary(word, context, { requestId, apiKey } = {}) {
   const prompt = dictionaryPrompt(word, context);
-  const response = await axios.post(buildGeminiApiUrl(apiKey), {
-    contents: [{ parts: [{ text: prompt }] }],
+  return callGeminiWithPolicies({
+    endpoint: 'dictionary',
+    apiKey,
+    requestId,
+    cacheTtlMs: DICTIONARY_CACHE_TTL_MS,
+    retries: 2,
+    payload: {
+      contents: [{ parts: [{ text: prompt }] }],
+    },
   });
-  return response.data;
 }
 
 // Hàm gọi Gemini cho luyện viết
 async function evaluateWriting(topic, content, { requestId, apiKey, level } = {}) {
   const prompt = writingPrompt(topic, content, level);
-  const response = await axios.post(buildGeminiApiUrl(apiKey), {
-    contents: [{ parts: [{ text: prompt }] }],
+  return callGeminiWithPolicies({
+    endpoint: 'writing',
+    apiKey,
+    requestId,
+    cacheTtlMs: WRITING_CACHE_TTL_MS,
+    retries: 1,
+    payload: {
+      contents: [{ parts: [{ text: prompt }] }],
+    },
   });
-  return response.data;
 }
 
 async function generateAssignment(topic, numQuestions, questionTypes, { requestId, apiKey } = {}) {
   const prompt = assignmentPrompt(topic, numQuestions, questionTypes);
-  const response = await axios.post(buildGeminiApiUrl(apiKey), {
-    contents: [{ parts: [{ text: prompt }] }],
+  return callGeminiWithPolicies({
+    endpoint: 'assignment',
+    apiKey,
+    requestId,
+    cacheTtlMs: ASSIGNMENT_CACHE_TTL_MS,
+    retries: 2,
+    payload: {
+      contents: [{ parts: [{ text: prompt }] }],
+    },
   });
-  return response.data;
 }
 
 // Hàm gọi Gemini cho chatbot
@@ -112,9 +220,11 @@ async function chatWithAI({ message, files, deepThink, googleSearch }, { request
       
       logger.info({ requestId, imageCount: visionParts.length - 1 }, 'Sending request to Gemini Vision API');
       
-      const response = await axios.post(visionApiUrl, {
-        contents: [{ parts: visionParts }]
-      });
+      const response = await postWithRetry(
+        visionApiUrl,
+        { contents: [{ parts: visionParts }] },
+        { requestId, endpoint: 'chatbot_vision', retries: 1 },
+      );
       
       logger.info({ requestId }, 'Vision API response received');
       return response.data;
@@ -134,17 +244,29 @@ async function chatWithAI({ message, files, deepThink, googleSearch }, { request
       }
       
       const fallbackPrompt = prompt + "\n\n" + fallbackMessage;
-      const response = await axios.post(textApiUrl, {
-        contents: [{ parts: [{ text: fallbackPrompt }] }],
-      });
-      return response.data;
+      try {
+        const response = await postWithRetry(
+          textApiUrl,
+          { contents: [{ parts: [{ text: fallbackPrompt }] }] },
+          { requestId, endpoint: 'chatbot_text_fallback', retries: 1 },
+        );
+        return response.data;
+      } catch (fallbackErr) {
+        throw mapAiError(fallbackErr, { endpoint: 'chatbot' });
+      }
     }
   } else {
     // Không có ảnh, sử dụng model text thường
-    const response = await axios.post(textApiUrl, {
-      contents: [{ parts }],
-    });
-    return response.data;
+    try {
+      const response = await postWithRetry(
+        textApiUrl,
+        { contents: [{ parts }] },
+        { requestId, endpoint: 'chatbot', retries: 1 },
+      );
+      return response.data;
+    } catch (err) {
+      throw mapAiError(err, { endpoint: 'chatbot' });
+    }
   }
 }
 
