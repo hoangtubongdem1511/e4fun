@@ -1,28 +1,15 @@
 const { getDictionary } = require('../services/gemini');
-const { lookupDictionary, buildContextText } = require('../services/dictionaryWebLookup');
 
 async function postDictionary(req, res) {
   const { word, context } = req.body;
 
-  // 1) Web lookup (dictionaryapi.dev) để có dữ liệu kiểm chứng.
-  // 2) Nếu thất bại, giữ nguyên `context` từ client (nếu có), hoặc dùng rỗng để prompt trả "không thể xác minh".
-  let webContextText = '';
-  try {
-    const web = await lookupDictionary(word, { requestId: req.requestId });
-    if (web.ok && web.data) webContextText = buildContextText(web.data);
-  } catch (e) {
-    // ignore; fallback to prompt-only mode
-    webContextText = '';
-  }
+  const userContext = typeof context === 'string' ? context.trim() : '';
 
-  const mergedContext = [webContextText, context].filter((v) => typeof v === 'string' && v.trim().length > 0).join('\n');
-
-  const result = await getDictionary(word, mergedContext, {
+  const result = await getDictionary(word, userContext, {
     requestId: req.requestId,
     apiKey: req.geminiApiKey,
   });
 
-  // HTTP-level cache (private): useful for repeated lookups in short interval.
   res.set('Cache-Control', 'private, max-age=60, stale-while-revalidate=30');
   res.set('Vary', 'x-gemini-api-key');
   return res.json(result);
@@ -31,4 +18,3 @@ async function postDictionary(req, res) {
 module.exports = {
   postDictionary,
 };
-

@@ -29,6 +29,13 @@ export default function Home() {
       link: "/assignment",
       color: "from-pink-500 to-pink-600",
       icon: "🎮"
+    },
+    {
+      title: "Trò chơi ghép đôi",
+      description: "Ghép từ và định nghĩa theo chủ đề với AI",
+      link: "/matching",
+      color: "from-indigo-500 to-purple-600",
+      icon: "🔗"
     }
   ];
 
@@ -47,38 +54,14 @@ export default function Home() {
             <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
               Học tiếng Anh thông minh cùng AI Gemini. Từ điển, luyện viết, tư vấn và bài tập tương tác.
             </p>
-            
-            {/* <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
-              <Link 
-                to="/assignment" 
-                className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold py-4 px-8 rounded-2xl text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
-              >
-                Bắt đầu học ngay
-              </Link>
-              <Link 
-                to="/chatbot" 
-                className="bg-white/70 dark:bg-white/10 backdrop-blur-sm border border-gray-200/80 dark:border-white/20 text-gray-900 dark:text-white font-semibold py-4 px-8 rounded-2xl text-lg transition-all duration-300 hover:bg-white/90 dark:hover:bg-white/20"
-              >
-                Hỏi AI tutor
-              </Link>
-            </div> */}
           </div>
         </div>
       </div>
 
       {/* Features Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-        {/* <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            Tính năng nổi bật
-          </h2>
-          <p className="text-gray-600 dark:text-gray-300 text-lg max-w-2xl mx-auto">
-            Khám phá các công cụ học tiếng Anh hiện đại được hỗ trợ bởi AI
-          </p>
-        </div> */}
-
         {/* Feature Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
           {features.map((feature, index) => (
             <Link
               key={index}
@@ -100,31 +83,7 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Stats Section */}
-        {/* <div className="mt-20 text-center">
-          <div className="bg-white/80 dark:bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-gray-200/80 dark:border-white/20">
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-              Tại sao chọn E4Fun?
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div>
-                <div className="text-3xl font-bold text-blue-400 mb-2"></div>
-                <div className="text-gray-900 dark:text-white font-semibold text-lg mb-1">AI Gemini</div>
-                <div className="text-gray-600 dark:text-gray-300 text-sm">Công nghệ AI tiên tiến nhất</div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-purple-400 mb-2"></div>
-                <div className="text-gray-900 dark:text-white font-semibold text-lg mb-1">Tương tác thời gian thực</div>
-                <div className="text-gray-600 dark:text-gray-300 text-sm">Phản hồi nhanh chóng và chính xác</div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-green-400 mb-2"></div>
-                <div className="text-gray-900 dark:text-white font-semibold text-lg mb-1">Cá nhân hóa</div>
-                <div className="text-gray-600 dark:text-gray-300 text-sm">Học tập theo nhu cầu riêng</div>
-              </div>
-            </div>
-          </div>
-        </div> */}
+
       </div>
     </div>
   );

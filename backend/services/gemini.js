@@ -3,6 +3,7 @@ const logger = require('../utils/logger');
 const { dictionaryPrompt } = require('../constants/dictionaryPrompt');
 const { writingPrompt } = require('../constants/writingPrompt');
 const { assignmentPrompt } = require('../constants/assignmentPrompt');
+const { matchingPrompt } = require('../constants/matchingPrompt');
 const chatbotScopePrompt = require('../constants/chatPrompt');
 const {
   makeAiCacheKey,
@@ -21,6 +22,7 @@ const CACHE_TTL = {
   dictionary: 30 * 60 * 1000,
   writing: 5 * 60 * 1000,
   assignment: 10 * 60 * 1000,
+  matching: 10 * 60 * 1000,
   chatbot: 0,
 };
 
@@ -185,6 +187,22 @@ async function generateAssignment(topic, numQuestions, questionTypes, { requestI
   });
 }
 
+async function generateMatching(topic, matchType, numPairs, { requestId, apiKey } = {}) {
+  const prompt = matchingPrompt(topic, matchType, numPairs);
+  return postGeminiWithResilience({
+    endpoint: 'matching',
+    apiKey,
+    requestId,
+    payload: {
+      contents: [{ parts: [{ text: prompt }] }],
+    },
+    useResultCache: true,
+    useInflightDedup: true,
+    maxRetries: 2,
+    ttlMs: CACHE_TTL.matching,
+  });
+}
+
 // Hàm gọi Gemini cho chatbot
 async function chatWithAI({ message, files, deepThink, googleSearch }, { requestId, apiKey } = {}) {
   const textApiUrl = buildGeminiApiUrl(apiKey);
@@ -286,4 +304,11 @@ async function chatWithAI({ message, files, deepThink, googleSearch }, { request
   }
 }
 
-module.exports = { getDictionary, evaluateWriting, chatWithAI, generateAssignment, buildGeminiApiUrl };
+module.exports = {
+  getDictionary,
+  evaluateWriting,
+  chatWithAI,
+  generateAssignment,
+  generateMatching,
+  buildGeminiApiUrl,
+};

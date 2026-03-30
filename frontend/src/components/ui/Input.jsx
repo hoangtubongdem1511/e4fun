@@ -1,4 +1,7 @@
-export default function Input({ className, ...rest }) {
-  return <input className={className} {...rest} />;
-}
+import { forwardRef } from "react";
 
+const Input = forwardRef(function Input({ className, ...rest }, ref) {
+  return <input ref={ref} className={className} {...rest} />;
+});
+
+export default Input;

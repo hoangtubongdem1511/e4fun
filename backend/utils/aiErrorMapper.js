@@ -11,6 +11,9 @@ function endpointFallbackMessage(endpoint) {
   if (endpoint === 'assignment') {
     return 'Hệ thống tạo bài tập đang quá tải, vui lòng thử lại sau ít phút.';
   }
+  if (endpoint === 'matching') {
+    return 'Trò ghép đôi đang quá tải, vui lòng thử lại sau ít phút.';
+  }
   if (endpoint === 'chatbot') {
     return 'Chatbot đang quá tải, bạn vui lòng thử lại sau ít phút.';
   }

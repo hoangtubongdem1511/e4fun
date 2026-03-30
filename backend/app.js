@@ -18,12 +18,14 @@ const dictionaryRoute = require('./routes/dictionary');
 const writingRoute = require('./routes/writing');
 const chatbotRoute = require('./routes/chatbot');
 const assignmentRoute = require('./routes/assignment');
+const matchingRoute = require('./routes/matching');
 
 // Use routes
 app.use('/api/dictionary', dictionaryRoute);
 app.use('/api/writing', writingRoute);
 app.use('/api/chatbot', chatbotRoute);
 app.use('/api/assignment', assignmentRoute);
+app.use('/api/matching', matchingRoute);
 
 // 404 + error handler tập trung
 app.use(notFound);
