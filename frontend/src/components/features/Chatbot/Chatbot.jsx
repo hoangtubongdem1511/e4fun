@@ -5,6 +5,7 @@ import { sendChatMessageText } from "@/services/chatbotService";
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
+import { Bot, Camera, Hand, User } from "lucide-react";
 
 const MAX_IMAGES = 4;
 const MAX_FILE_SIZE = 3 * 1024 * 1024; // 3MB
@@ -334,7 +335,11 @@ export default function Chatbot() {
                   ? 'bg-gradient-to-r from-blue-500 to-blue-600' 
                   : 'bg-gradient-to-r from-purple-500 to-purple-600'
               }`}>
-                {msg.role === 'user' ? 'U' : 'AI'}
+                {msg.role === 'user' ? (
+                  <User className="h-5 w-5" strokeWidth={2.25} aria-hidden="true" />
+                ) : (
+                  <Bot className="h-5 w-5" strokeWidth={2.25} aria-hidden="true" />
+                )}
               </div>
               
               {/* Message Bubble */}
@@ -368,7 +373,7 @@ export default function Chatbot() {
           <div className="flex justify-start">
             <div className="flex items-start space-x-3">
               <div className="w-11 h-11 md:w-12 md:h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl flex items-center justify-center text-white text-sm font-bold">
-                AI
+                <Bot className="h-5 w-5" strokeWidth={2.25} aria-hidden="true" />
               </div>
               <div className="bg-white/80 dark:bg-white/10 p-5 rounded-2xl border border-gray-200/80 dark:border-white/20">
                 <div className="flex space-x-2">
@@ -388,7 +393,10 @@ export default function Chatbot() {
       {uploadedImages.length > 0 && (
         <div className="p-4 border-t border-gray-200/80 dark:border-white/20 bg-gray-50/70 dark:bg-white/5">
           <div className="flex items-center space-x-3 mb-3">
-            <span className="text-sm text-gray-600 dark:text-gray-300">📷 Ảnh đã chọn:</span>
+            <span className="text-sm text-gray-600 dark:text-gray-300 flex items-center gap-2">
+              <Camera className="h-4 w-4" strokeWidth={2.25} aria-hidden="true" />
+              Ảnh đã chọn:
+            </span>
             <button
               onClick={() =>
                 setUploadedImages((prev) => {
@@ -441,7 +449,7 @@ export default function Chatbot() {
                   : 'bg-gray-100/70 dark:bg-gray-800/50 text-gray-700 dark:text-gray-300 border border-gray-200/70 dark:border-gray-600/50 hover:bg-gray-200/70 dark:hover:bg-gray-700/50'
               }`}
             >
-              📷
+              <Camera className="h-6 w-6" strokeWidth={2.25} aria-hidden="true" />
             </Button>
           </div>
           
