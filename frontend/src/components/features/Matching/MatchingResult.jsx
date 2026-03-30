@@ -24,27 +24,68 @@ export default function MatchingResult({
           Kết quả trò chơi
         </h2>
 
-        <div className="bg-white/80 dark:bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-6 border border-gray-200/80 dark:border-white/20">
-          <p className="text-center text-xl font-semibold text-gray-900 dark:text-white mb-2">
+        <div className="bg-white/80 dark:bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-6 border border-gray-200/80 dark:border-white/20 text-center">
+          <p className="text-xl font-semibold text-gray-900 dark:text-white mb-5">
             {completed ? "Hoàn thành!" : "Hết thời gian!"}
           </p>
-          <p className="text-center text-gray-600 dark:text-gray-300">
-            Bạn đã ghép {matchedCount}/{totalPairs} cặp
+          <div className="text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 tabular-nums">
+            {matchedCount}/{totalPairs}
+          </div>
+          <p className="text-gray-600 dark:text-gray-300 text-sm mt-2 font-medium">
+            cặp đã ghép
           </p>
         </div>
 
-        <div className="bg-white/80 dark:bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-6 border border-gray-200/80 dark:border-white/20">
-          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 border-b border-gray-200/80 dark:border-white/20 pb-2">
+        <div className="bg-white/80 dark:bg-white/10 backdrop-blur-sm rounded-2xl p-6 md:p-8 mb-6 border border-gray-200/80 dark:border-white/20">
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">
             Thống kê
           </h3>
-          <ul className="space-y-2 text-gray-700 dark:text-gray-300">
-            <li>Thời gian: {formatElapsed(elapsedSeconds)}</li>
-            <li>
-              Cặp được ghép: {matchedCount}/{totalPairs}
-            </li>
-            <li>Độ chính xác (theo lượt thử): {accuracyPercent ?? 0}%</li>
-            <li>Lượt ghép sai: {wrongAttempts}</li>
-          </ul>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+            Tóm tắt nhanh hiệu suất ván vừa chơi
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4">
+            <div className="rounded-xl p-4 text-center border border-blue-500/25 bg-blue-500/10 dark:bg-blue-500/15 min-w-0">
+              <p className="text-xs font-semibold uppercase tracking-wide text-blue-700 dark:text-blue-300 mb-1">
+                Thời gian
+              </p>
+              <p className="text-2xl font-bold tabular-nums text-gray-900 dark:text-white">
+                {formatElapsed(elapsedSeconds)}
+              </p>
+            </div>
+            <div className="rounded-xl p-4 text-center border border-violet-500/25 bg-violet-500/10 dark:bg-violet-500/15 min-w-0">
+              <p className="text-xs font-semibold uppercase tracking-wide text-violet-700 dark:text-violet-300 mb-1">
+                Độ chính xác
+              </p>
+              <p className="text-2xl font-bold tabular-nums text-transparent bg-clip-text bg-gradient-to-r from-violet-500 to-purple-500">
+                {accuracyPercent ?? 0}%
+              </p>
+              <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">
+                theo lượt thử
+              </p>
+            </div>
+            <div
+              className={`rounded-xl p-4 text-center border min-w-0 ${
+                wrongAttempts > 0
+                  ? "border-amber-500/35 bg-amber-500/10 dark:bg-amber-500/15"
+                  : "border-gray-200/80 dark:border-white/15 bg-gray-100/50 dark:bg-white/5"
+              }`}
+            >
+              <p
+                className={`text-xs font-semibold uppercase tracking-wide mb-1 ${
+                  wrongAttempts > 0
+                    ? "text-amber-800 dark:text-amber-300"
+                    : "text-gray-600 dark:text-gray-400"
+                }`}
+              >
+                Ghép sai
+              </p>
+              <p className="text-2xl font-bold tabular-nums text-gray-900 dark:text-white">
+                {wrongAttempts}
+              </p>
+              <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">lượt</p>
+            </div>
+          </div>
         </div>
 
         <div className="bg-white/80 dark:bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 border border-gray-200/80 dark:border-white/20">

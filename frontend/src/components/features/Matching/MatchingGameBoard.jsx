@@ -203,7 +203,7 @@ export default function MatchingGameBoard({
                   disabled={isMatched || ended}
                   onClick={() => handleCardClick(card)}
                   className={`
-                    text-left rounded-xl border-2 p-4 min-h-[120px] flex flex-col justify-between transition-all duration-200
+                    rounded-xl border-2 p-4 min-h-[120px] flex flex-col transition-all duration-200
                     shadow-md hover:shadow-lg
                     ${
                       isMatched
@@ -214,10 +214,10 @@ export default function MatchingGameBoard({
                     ${isWrong ? "animate-pulse border-red-400/80" : ""}
                   `}
                 >
-                  <span className="text-xs font-bold uppercase tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600 text-center mb-2">
+                  <span className="shrink-0 text-xs font-bold uppercase tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600 text-center">
                     {card.badge}
                   </span>
-                  <span className="text-gray-900 dark:text-white text-sm md:text-base font-medium leading-snug text-center">
+                  <span className="flex flex-1 items-center justify-center text-gray-900 dark:text-white text-sm md:text-base font-medium leading-snug text-center px-0.5">
                     {card.text}
                   </span>
                 </button>
