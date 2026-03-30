@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import { matchingSchema } from "@/validators/matching.schema";
+import { backendErrorMessage } from "@/utils/backendErrorMessage";
 
 const SUGGESTED_TOPICS = [
   "Travel",
@@ -26,6 +27,7 @@ const TIME_OPTIONS = [1, 2, 3, 5, 10, 15];
 
 export default function MatchingForm({ onSubmit }) {
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const {
     register,
@@ -44,18 +46,28 @@ export default function MatchingForm({ onSubmit }) {
   });
 
   const topic = watch("topic");
+  const matchType = watch("matchType");
+  const numPairs = watch("numPairs");
+  const timeLimitMinutes = watch("timeLimitMinutes");
   const safeTopic = typeof topic === "string" ? topic : "";
 
   const onFormSubmit = async (data) => {
     setIsLoading(true);
+    setError("");
     try {
       await onSubmit(data);
     } catch (e) {
-      console.error("Matching generate error:", e);
+      setError(backendErrorMessage(e));
     } finally {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!error) return;
+    // Khi người dùng đổi input, xóa banner lỗi để tránh gây nhiễu UX.
+    setError("");
+  }, [topic, matchType, numPairs, timeLimitMinutes]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="min-h-screen p-4">
@@ -100,7 +112,11 @@ export default function MatchingForm({ onSubmit }) {
                       key={s}
                       className="px-4 py-2 rounded-full bg-gray-100/70 dark:bg-gray-800/50 text-gray-700 dark:text-gray-200 border border-gray-200/70 dark:border-gray-600/50 hover:bg-blue-500 hover:text-white hover:border-blue-400 transition-all duration-300 text-sm font-medium"
                       onClick={() =>
-                        setValue("topic", s, { shouldValidate: true, shouldDirty: true, shouldTouch: true })
+                        setValue("topic", s, {
+                          shouldValidate: true,
+                          shouldDirty: true,
+                          shouldTouch: true,
+                        })
                       }
                     >
                       {s}
@@ -200,6 +216,25 @@ export default function MatchingForm({ onSubmit }) {
                 "Bắt đầu trò chơi"
               )}
             </Button>
+
+            {error && (
+              <div className="bg-red-500/20 border border-red-500/30 rounded-xl p-4">
+                <div className="flex items-center text-red-700 dark:text-red-300">
+                  <svg
+                    className="w-5 h-5 mr-2"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  {error}
+                </div>
+              </div>
+            )}
           </form>
         </div>
       </div>

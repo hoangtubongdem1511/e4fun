@@ -19,14 +19,19 @@ const QUESTION_TYPES = [
   { value: "Vocabulary", label: "Từ vựng" }
 ];
 
-export default function AssignmentForm({ onSubmit }) {
+export default function AssignmentForm({ onSubmit, backendError = "", onBackendErrorClear }) {
   const [topic, setTopic] = useState("");
   const [numQuestions, setNumQuestions] = useState(10);
   const [selectedTypes, setSelectedTypes] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
+  const clearBackendError = () => {
+    if (typeof onBackendErrorClear === "function") onBackendErrorClear();
+  };
+
   const handleTypeChange = (type) => {
+    clearBackendError();
     setSelectedTypes((prev) =>
       prev.includes(type)
         ? prev.filter((t) => t !== type)
@@ -68,6 +73,7 @@ export default function AssignmentForm({ onSubmit }) {
   };
 
   const handleTopicSuggestion = (suggestedTopic) => {
+    clearBackendError();
     setTopic(suggestedTopic);
     if (errors.topic) {
       setErrors(prev => ({ ...prev, topic: null }));
@@ -100,6 +106,7 @@ export default function AssignmentForm({ onSubmit }) {
                   }`}
                   value={topic}
                   onChange={(e) => {
+                    if (backendError) clearBackendError();
                     setTopic(e.target.value);
                     if (errors.topic) setErrors(prev => ({ ...prev, topic: null }));
                   }}
@@ -146,6 +153,7 @@ export default function AssignmentForm({ onSubmit }) {
                   }`}
                   value={numQuestions}
                   onChange={(e) => {
+                    if (backendError) clearBackendError();
                     setNumQuestions(Number(e.target.value));
                     if (errors.numQuestions) setErrors(prev => ({ ...prev, numQuestions: null }));
                   }}
@@ -169,7 +177,10 @@ export default function AssignmentForm({ onSubmit }) {
                         ? 'bg-blue-500 text-white border-blue-400'
                         : 'bg-gray-100/70 dark:bg-gray-800/50 text-gray-700 dark:text-gray-200 border-gray-200/70 dark:border-gray-600/50 hover:bg-gray-200/70 dark:hover:bg-gray-700/50'
                     }`}
-                    onClick={() => setNumQuestions(num)}
+                    onClick={() => {
+                      clearBackendError();
+                      setNumQuestions(num);
+                    }}
                   >
                     {num} câu
                   </button>
@@ -220,28 +231,49 @@ export default function AssignmentForm({ onSubmit }) {
               )}
             </div>
 
-            {/* Submit Button */}
-            <Button
-              type="submit"
-              disabled={isLoading || !topic || selectedTypes.length === 0 || !numQuestions}
-              className={`w-full py-4 px-6 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 ${
-                isLoading || !topic || selectedTypes.length === 0 || !numQuestions
-                  ? 'bg-gray-300 dark:bg-gray-500 text-gray-600 dark:text-gray-300 cursor-not-allowed'
-                  : 'bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 shadow-lg'
-              }`}
-            >
-              {isLoading ? (
-                <div className="flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900 dark:border-white mr-3"></div>
-                  Đang tạo bài tập...
-                </div>
-              ) : (
-                <div className="flex items-center justify-center">
+            <div className="space-y-4">
+              {/* Submit Button */}
+              <Button
+                type="submit"
+                disabled={isLoading || !topic || selectedTypes.length === 0 || !numQuestions}
+                className={`w-full py-4 px-6 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 ${
+                  isLoading || !topic || selectedTypes.length === 0 || !numQuestions
+                    ? 'bg-gray-300 dark:bg-gray-500 text-gray-600 dark:text-gray-300 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 shadow-lg'
+                }`}
+              >
+                {isLoading ? (
+                  <div className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900 dark:border-white mr-3"></div>
+                    Đang tạo bài tập...
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center">
                     <span className="mr-2"></span>
-                  Tạo bài tập ngay
+                    Tạo bài tập ngay
+                  </div>
+                )}
+              </Button>
+
+              {backendError && (
+                <div className="bg-red-500/20 border border-red-500/30 rounded-xl p-4">
+                  <div className="flex items-center text-red-700 dark:text-red-300">
+                    <svg
+                      className="w-5 h-5 mr-2"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    {backendError}
+                  </div>
                 </div>
               )}
-            </Button>
+            </div>
           </form>
         </div>
       </div>
