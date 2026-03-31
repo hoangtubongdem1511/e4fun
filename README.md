@@ -1,66 +1,48 @@
-# 🎓 E4Fun - Học Tiếng Anh Thông Minh với AI Gemini
+# E4Fun - Học Tiếng Anh Thông Minh với AI Gemini
 
 E4Fun là một ứng dụng web học tiếng Anh hiện đại được xây dựng với React, Node.js và tích hợp AI Gemini để cung cấp trải nghiệm học tập tương tác và cá nhân hóa.
 
-![E4Fun Banner](https://img.shields.io/badge/E4Fun-AI%20Learning%20Platform-blue?style=for-the-badge&logo=react)
-![React](https://img.shields.io/badge/React-19.1.0-61DAFB?style=flat-square&logo=react)
-![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=flat-square&logo=node.js)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-3.4.3-38B2AC?style=flat-square&logo=tailwind-css)
+## Tính năng nổi bật
 
-## 🌟 Tính năng nổi bật
-
-### 📚 **Từ điển thông minh**
+### **Từ điển thông minh**
 - Tra cứu từ vựng với định nghĩa chi tiết
 - Ví dụ sử dụng và phát âm
 - Gợi ý từ vựng phổ biến
 - Kết quả được tạo bởi AI Gemini
 
-### ✍️ **Luyện viết AI**
+### **Luyện viết**
 - Viết bài theo chủ đề tự chọn
 - Nhận phản hồi chi tiết từ AI tutor
 - Đánh giá ngữ pháp, từ vựng và cấu trúc
 - Gợi ý chủ đề viết phong phú
 - Đếm số từ và mẹo viết hiệu quả
 
-### 🤖 **AI Tutor đồng hành**
+### **Chat bot**
 - Chat trực tiếp với AI tutor 24/7
 - Hỗ trợ mọi vấn đề tiếng Anh
 - Upload ảnh để phân tích
 - Chế độ "Suy nghĩ sâu" cho câu trả lời chi tiết
-- Lưu trữ lịch sử trò chuyện
 
-### 🎯 **Bài tập tương tác**
+### **Bài tập tương tác**
 - Tạo quiz game theo chủ đề
 - Nhiều loại câu hỏi: ngữ pháp, từ vựng, đọc hiểu
 - Chấm điểm tự động và giải thích chi tiết
 - Giao diện làm bài hiện đại với progress bar
 - Kết quả chi tiết với phân tích từng câu
 
-## 🛠️ Công nghệ sử dụng
+### **Trò chơi ghép đôi**
+- Chọn chủ đề, số cặp và loại ghép (từ–nghĩa, đồng nghĩa, trái nghĩa,…)
+- Cặp thẻ được sinh tự động bởi AI Gemini theo đúng chủ đề
+- Bộ 3 màn hình: chọn cấu hình, chơi game trên bàn thẻ, xem kết quả
+- Thống kê thời gian, số lần ghép sai và độ chính xác sau mỗi lượt chơi
 
-### Frontend
-- **React 19.1.0** - UI Framework
-- **Tailwind CSS 3.4.3** - Styling
-- **React Router DOM** - Navigation
-- **Axios** - HTTP Client
-- **React Markdown** - Markdown rendering
-- **React Dropzone** - File upload
+## Yêu cầu hệ thống
 
-### Backend
-- **Node.js** - Runtime environment
-- **Express.js** - Web framework
-- **Google Gemini AI** - AI services
-- **Cloudinary** - Image storage
-- **CORS** - Cross-origin resource sharing
+- Node.js **>= 18**
+- npm (khuyến nghị dùng cùng bản cài Node)
+- Google Gemini API key (bắt buộc để gọi AI)
 
-## 📋 Yêu cầu hệ thống
-
-- Node.js 18.0.0 trở lên
-- npm hoặc yarn
-- Google Gemini API key
-- Cloudinary account (cho upload ảnh)
-
-## 🚀 Hướng dẫn cài đặt
+## Hướng dẫn cài đặt
 
 ### 1. Clone repository
 ```bash
@@ -68,7 +50,7 @@ git clone https://github.com/hoangtubongdem1511/e4fun.git
 cd e4fun
 ```
 
-### 2. Cài đặt dependencies
+### 2. Cài đặt dependencies (backend & frontend)
 
 #### Backend
 ```bash
@@ -100,81 +82,95 @@ Tạo file `.env` trong thư mục `frontend`:
 ```env
 REACT_APP_API_URL=http://localhost:5000
 ```
+### 4. Khởi chạy ứng dụng (dev)
 
-### 4. Khởi chạy ứng dụng
+Mở **2 terminal**:
 
-#### Backend
+#### Terminal 1 – Backend
 ```bash
 cd backend
 npm start
 ```
-Server sẽ chạy tại: http://localhost:5000
+Server API chạy tại: http://localhost:5000
 
-#### Frontend
+#### Terminal 2 – Frontend
 ```bash
 cd frontend
 npm start
 ```
-Ứng dụng sẽ chạy tại: http://localhost:3000
+Web app chạy tại: http://localhost:3000
 
-## 📸 Screenshots
+## Screenshots
 
-### 🏠 Trang chủ
+### Trang chủ
 <img src="/frontend/images/Home.png" width="100%" alt="Home">
 
-### 📚 Từ điển
+### Từ điển
 <img src="/frontend/images/Dictionary1.png" width="100%" alt="Dictionary1">
 <img src="/frontend/images/Dictionary2.png" width="100%" alt="Dictionary2">
 
-### ✍️ Luyện viết
+### Luyện viết
 <img src="/frontend/images/Writing1.png" width="100%" alt="Writing1">
 <img src="/frontend/images/Writing2.png" width="100%" alt="Writing2">
 
-### 🤖 AI Tutor
+### Chat Bot
 <img src="/frontend/images/ChatBox.png" width="100%" alt="ChatBox">
 
-### 🎯 Bài tập
+### Quiz
 <img src="/frontend/images/Assignment1.png" width="100%" alt="Assignment1">
 <img src="/frontend/images/Assignment2.png" width="100%" alt="Assignment2">
 <img src="/frontend/images/Assignment3.png" width="100%" alt="Assignment3">
 
-## 🔧 Cấu trúc dự án
+### Trò chơi ghép đôi
+<img src="/frontend/images/Matching1.png" width="100%" alt="Matching1">
+<img src="/frontend/images/Matching2.png" width="100%" alt="Matching2">
+<img src="/frontend/images/Matching3.png" width="100%" alt="Matching3">
+
+## Cấu trúc dự án
 
 ```
 e4fun/
 ├── backend/
 │   ├── app.js                 # Server entry point
 │   ├── routes/                # API routes
-│   │   ├── assignment.js      # Quiz generation & grading
-│   │   ├── chatbot.js         # AI chat functionality
-│   │   ├── dictionary.js      # Dictionary lookup
-│   │   └── writing.js         # Writing assessment
-│   ├── services/              # External services
-│   │   └── gemini.js          # AI integration
+│   │   ├── assignment.js      # Quiz (tạo & chấm điểm)
+│   │   ├── chatbot.js         # AI chat
+│   │   ├── dictionary.js      # Từ điển
+│   │   ├── matching.js        # Matching game
+│   │   └── writing.js         # Luyện viết
+│   ├── controllers/           # Xử lý request theo từng feature
+│   ├── validators/            # Zod schemas validate body
+│   ├── constants/             # Prompt Gemini, error codes,...
+│   ├── services/
+│   │   └── gemini.js          # Tầng gọi Gemini + cache
+│   ├── utils/                 # Helper (parse JSON Gemini, map lỗi,...)
 │   └── package.json
 ├── frontend/
 │   ├── src/
-│   │   ├── components/        # React components
-│   │   │   ├── AssignmentForm.jsx
-│   │   │   ├── Chatbot.jsx
-│   │   │   ├── Dictionary.jsx
-│   │   │   ├── Layout.jsx
-│   │   │   ├── QuizGame.jsx
-│   │   │   ├── QuizResult.jsx
-│   │   │   └── WritingPractice.jsx
-│   │   ├── pages/             # Page components
-│   │   │   ├── AssignmentPage.jsx
-│   │   │   ├── ChatbotPage.jsx
-│   │   │   ├── DictionaryPage.jsx
-│   │   │   ├── Home.jsx
-│   │   │   └── WritingPage.jsx
-│   │   ├── App.js             # Main app component
+│   │   ├── components/
+│   │   │   ├── common/        # Navbar, Layout, IntroduceApp, Modal,...
+│   │   │   ├── ui/            # Button, Input, Textarea,...
+│   │   │   └── features/
+│   │   │       ├── Assignment/  # AssignmentForm, QuizGame, QuizResult,...
+│   │   │       ├── Chatbot/     # Chatbot, MessageImageCollage,...
+│   │   │       ├── Dictionary/  # Dictionary
+│   │   │       └── Matching/    # MatchingForm, MatchingGameBoard, MatchingResult
+│   │   ├── pages/             # Trang: Home, AssignmentPage, MatchingPage,...
+│   │   ├── validators/        # Zod schemas cho frontend
+│   │   ├── utils/             # backendErrorMessage,...
+│   │   ├── App.js             # Main app component (router)
 │   │   └── index.js           # Entry point
 │   └── package.json
 └── README.md
 ```
 
-## 🤝 Đóng góp
+## Tính năng bổ sung trong tương lai
+- Đăng nhập và cập nhật thông tin
+- Image to text
+- Flashcard
+- Speaking Practice
+
+## Đóng góp
 
 1. Fork dự án
 2. Tạo feature branch (`git checkout -b feature/AmazingFeature`)
@@ -182,4 +178,4 @@ e4fun/
 4. Push to branch (`git push origin feature/AmazingFeature`)
 5. Mở Pull Request
 
-⭐ **Nếu dự án này hữu ích, hãy cho mình một star!** 
+ **Nếu dự án này hữu ích, hãy cho mình một star!** 
