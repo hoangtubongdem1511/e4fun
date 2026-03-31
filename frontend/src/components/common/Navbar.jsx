@@ -1,14 +1,19 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import useTheme from "@/theme/useTheme";
+import { Info } from "lucide-react";
+import IntroduceApp from "@/components/common/IntroduceApp";
 
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
   const isDark = theme === "dark";
+  const [showAbout, setShowAbout] = useState(false);
 
   return (
-    <nav className="bg-white/80 dark:bg-white/10 backdrop-blur-sm border-b border-gray-200/80 dark:border-white/20 fixed top-0 left-0 right-0 z-50">
-      <div className="w-full px-4 sm:px-5 lg:px-20">
-        <div className="flex justify-between items-center h-20">
+    <>
+      <nav className="bg-white/80 dark:bg-white/10 backdrop-blur-sm border-b border-gray-200/80 dark:border-white/20 fixed top-0 left-0 right-0 z-50">
+        <div className="w-full px-4 sm:px-5 lg:px-20">
+          <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3">
             <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
@@ -16,14 +21,24 @@ export default function Navbar() {
             </div>
           </Link>
 
-          <div className="hidden md:flex items-center space-x-12">
+          <div className="hidden md:flex items-center space-x-3">
+
+            {/* About */}
+            <button
+              type="button"
+              onClick={() => setShowAbout(true)}
+              aria-label="Giới thiệu ứng dụng"
+              className="inline-flex items-center justify-center p-3 rounded-xl bg-white/60 dark:bg-white/10 border border-gray-200/80 dark:border-white/20 hover:bg-white/80 dark:hover:bg-white/20 transition-colors"
+            >
+              <Info className="w-6 h-6 text-gray-800 dark:text-white" strokeWidth={2.25} aria-hidden="true" />
+            </button>
 
             {/* Theme toggle */}
             <button
               type="button"
               onClick={toggleTheme}
               aria-label={isDark ? "Chuyển sang Light mode" : "Chuyển sang Dark mode"}
-              className="ml-2 inline-flex items-center justify-center p-3 rounded-xl bg-white/60 dark:bg-white/10 border border-gray-200/80 dark:border-white/20 hover:bg-white/80 dark:hover:bg-white/20 transition-colors"
+              className="inline-flex items-center justify-center p-3 rounded-xl bg-white/60 dark:bg-white/10 border border-gray-200/80 dark:border-white/20 hover:bg-white/80 dark:hover:bg-white/20 transition-colors"
             >
               {isDark ? (
                 // Sun icon
@@ -66,6 +81,16 @@ export default function Navbar() {
           {/* Mobile menu button */}
           <div className="md:hidden">
             <div className="flex items-center gap-2">
+              {/* About */}
+              <button
+                type="button"
+                onClick={() => setShowAbout(true)}
+                aria-label="Giới thiệu ứng dụng"
+                className="inline-flex items-center justify-center p-3 rounded-xl bg-white/60 dark:bg-white/10 border border-gray-200/80 dark:border-white/20 hover:bg-white/80 dark:hover:bg-white/20 transition-colors"
+              >
+                <Info className="w-6 h-6 text-gray-800 dark:text-white" strokeWidth={2.25} aria-hidden="true" />
+              </button>
+
               {/* Theme toggle */}
               <button
                 type="button"
@@ -126,9 +151,12 @@ export default function Navbar() {
               </button>
             </div>
           </div>
+          </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+
+      <IntroduceApp open={showAbout} onClose={() => setShowAbout(false)} />
+    </>
   );
 }
 

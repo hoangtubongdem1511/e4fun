@@ -5,7 +5,7 @@ import { sendChatMessageText } from "@/services/chatbotService";
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
-import { Bot, Camera, Hand, User } from "lucide-react";
+import { Bot, Camera, User } from "lucide-react";
 
 const MAX_IMAGES = 4;
 const MAX_FILE_SIZE = 3 * 1024 * 1024; // 3MB
