@@ -8,7 +8,7 @@ Dự án gồm **backend** (Express, App Service) và **frontend** (React build,
 2. **Runtime stack:** Node **20 LTS**, **OS:** Linux.
 3. **Pricing:** Free F1 hoặc B1 (Azure for Students).
 4. Sau khi tạo → **Configuration** → **Application settings** → thêm:
-   - `GOOGLE_API_KEY` = API key Gemini (giá trị thật).
+   - `GOOGLE_API_KEY` **hoặc** `GEMINI_API_KEY` = API key Gemini (giá trị thật; hai tên đều được code đọc).
    - `NODE_ENV` = `production`.
 5. **Configuration** → **General settings** → **Startup Command:** `npm start`.
 6. **Overview** → **Get publish profile** → tải file `.PublishSettings`.

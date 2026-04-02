@@ -16,7 +16,8 @@ const {
 const { mapGeminiError } = require('../utils/aiErrorMapper');
 
 const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
-const SERVER_GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+// README/DEPLOY dùng GOOGLE_API_KEY; code cũ dùng GEMINI_API_KEY — hỗ trợ cả hai.
+const SERVER_GEMINI_API_KEY = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
 
 const CACHE_TTL = {
   dictionary: 30 * 60 * 1000,
