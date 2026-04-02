@@ -7,6 +7,9 @@ yarn-error.log*
 # Environment variables
 .env
 .env.local
+
+# Chỉ giữ cục bộ — không hiển thị trên GitHub
+DEPLOY.md
 .env.development.local
 .env.test.local
 .env.production.local
