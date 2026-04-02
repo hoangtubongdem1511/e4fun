@@ -48,18 +48,20 @@ Ghi lại URL API dạng `https://<tên-app>.azurewebsites.net` (không có `/` 
 
 ## 5. GitHub — secret cho frontend
 
+Khi tạo Static Web App và kết nối GitHub, Azure thường tự thêm **một** workflow (vd. `azure-static-web-apps-*.yml`) và **một** secret token có tên dạng `AZURE_STATIC_WEB_APPS_API_TOKEN_<TÊN_RESOURCE>`. Trong repo này file đó là `azure-static-web-apps-brave-bay-03271c700.yml` — **chỉ cần workflow đó** cho SWA; không thêm workflow deploy SWA thứ hai để tránh chạy trùng.
+
 **Secrets:**
 
 | Name | Nội dung |
 |------|----------|
-| `AZURE_STATIC_WEB_APPS_API_TOKEN` | Token từ bước 4 |
+| `AZURE_STATIC_WEB_APPS_API_TOKEN_*` | Do Azure tạo sẵn (vd. `..._BRAVE_BAY_03271C700`); đừng đổi tên nếu workflow đang tham chiếu đúng. |
 | `REACT_APP_API_URL` | URL HTTPS **App Service backend** (Express), ví dụ `https://e4fun-api.azurewebsites.net` — **không** dùng URL `*.azurestaticapps.net` |
 
-Workflow sẽ ghi `frontend/.env.production` trước khi build để `REACT_APP_API_URL` được nhúng vào bundle. Nếu bỏ qua bước này, trình duyệt sẽ gọi nhầm `/api/...` trên chính Static Web App và lỗi 405/404.
+Workflow ghi `frontend/.env.production` trước khi build để `REACT_APP_API_URL` được nhúng vào bundle. Nếu thiếu, trình duyệt sẽ gọi nhầm `/api/...` lên Static Web App (405/404).
 
 ## 6. Deploy frontend
 
-- Push thay đổi trong `frontend/`, hoặc chạy workflow **Deploy frontend to Azure Static Web Apps** thủ công.
+- Push thay đổi trong `frontend/`, hoặc chạy workflow **Azure Static Web Apps CI/CD** thủ công (**Run workflow**).
 - Mở URL Static Web App (trong **Overview** của SWA) và thử các tính năng gọi API.
 
 ## Ghi chú
