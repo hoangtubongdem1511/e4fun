@@ -42,6 +42,10 @@ E4Fun là một ứng dụng web học tiếng Anh hiện đại được xây d
 - npm (khuyến nghị dùng cùng bản cài Node)
 - Google Gemini API key (bắt buộc để gọi AI)
 
+## Triển khai (Azure + GitHub Actions)
+
+Hướng dẫn từng bước: [DEPLOY.md](./DEPLOY.md).
+
 ## Hướng dẫn cài đặt
 
 ### 1. Clone repository

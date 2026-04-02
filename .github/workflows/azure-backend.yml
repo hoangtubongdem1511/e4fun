@@ -1,0 +1,44 @@
+# Deploy Express API to Azure App Service (Linux, Node).
+# Prerequisites: create a Web App (Node 20 LTS), set Application settings:
+#   GOOGLE_API_KEY, NODE_ENV=production
+# General settings → Startup command: npm start
+# GitHub secret: AZURE_WEBAPP_API_PUBLISH_PROFILE (Download publish profile from Web App overview)
+
+name: Deploy backend to Azure
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/azure-backend.yml'
+  workflow_dispatch:
+
+env:
+  # Repository variable: Settings → Secrets and variables → Actions → Variables → AZURE_WEBAPP_API_NAME
+  AZURE_WEBAPP_NAME: ${{ vars.AZURE_WEBAPP_API_NAME }}
+  NODE_VERSION: '20.x'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install production dependencies
+        working-directory: backend
+        run: npm ci --omit=dev
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_API_PUBLISH_PROFILE }}
+          package: backend

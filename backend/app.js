@@ -13,6 +13,10 @@ const errorHandler = require('./middleware/errorHandler');
 
 app.use(requestLogger);
 
+app.get('/api/health', (req, res) => {
+  res.json({ ok: true });
+});
+
 // Import routes
 const dictionaryRoute = require('./routes/dictionary');
 const writingRoute = require('./routes/writing');
