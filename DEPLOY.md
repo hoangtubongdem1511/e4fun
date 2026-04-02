@@ -53,7 +53,9 @@ Ghi lại URL API dạng `https://<tên-app>.azurewebsites.net` (không có `/` 
 | Name | Nội dung |
 |------|----------|
 | `AZURE_STATIC_WEB_APPS_API_TOKEN` | Token từ bước 4 |
-| `REACT_APP_API_URL` | URL HTTPS API, ví dụ `https://e4fun-api.azurewebsites.net` |
+| `REACT_APP_API_URL` | URL HTTPS **App Service backend** (Express), ví dụ `https://e4fun-api.azurewebsites.net` — **không** dùng URL `*.azurestaticapps.net` |
+
+Workflow sẽ ghi `frontend/.env.production` trước khi build để `REACT_APP_API_URL` được nhúng vào bundle. Nếu bỏ qua bước này, trình duyệt sẽ gọi nhầm `/api/...` trên chính Static Web App và lỗi 405/404.
 
 ## 6. Deploy frontend
 

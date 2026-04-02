@@ -29,6 +29,13 @@ jobs:
         with:
           submodules: false
 
+      # CRA chỉ embed REACT_APP_* lúc build. Ghi .env.production để Oryx chắc chắn nhận biến
+      # (một số bản SWA deploy không forward env của step sang npm run build).
+      - name: Set production API URL for build
+        run: |
+          test -n "${{ secrets.REACT_APP_API_URL }}" || (echo "Missing secret REACT_APP_API_URL" && exit 1)
+          echo "REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }}" > frontend/.env.production
+
       - name: Build and deploy
         uses: Azure/static-web-apps-deploy@v1
         env:
